@@ -1,4 +1,5 @@
 import FeaturesSection from "./components/FeaturesSection";
+import Footer from "./components/Footer";
 import HeroSection from "./components/HeroSection";
 
 export default function Home() {
@@ -6,6 +7,7 @@ export default function Home() {
     <div className="w-full">
       <HeroSection />
       <FeaturesSection />
+      <Footer />
     </div>
   );
 }
