@@ -15,14 +15,10 @@ export default function HeroSection() {
         <Button
           colorful={true}
           text={"Zaloguj się"}
-          paddingX={"5"}
-          paddingY={"2"}
         />
         <Button
           colorful={false}
           text={"Zarejestruj się"}
-          paddingX={"5"}
-          paddingY={"2"}
         />
       </div>
     </section>
