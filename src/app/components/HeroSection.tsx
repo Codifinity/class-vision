@@ -1,5 +1,6 @@
 import React from "react";
 import Button from "./Button";
+import Link from "next/link";
 
 export default function HeroSection() {
   return (
@@ -12,14 +13,11 @@ export default function HeroSection() {
         ipsumlorem ipsumlorem ipsumlorem ipsum
       </p>
       <div className="flex md:flex-row flex-col justify-center items-center gap-5 md:mt-32 mt-24">
-        <Button
+        <Link href='/login'>
+          <Button
           colorful={true}
           text={"Zaloguj się"}
-        />
-        <Button
-          colorful={false}
-          text={"Zarejestruj się"}
-        />
+        /></Link>
       </div>
     </section>
   );
