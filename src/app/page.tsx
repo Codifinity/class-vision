@@ -1,7 +1,13 @@
+import FeaturesSection from "./components/FeaturesSection";
+import Footer from "./components/Footer";
+import HeroSection from "./components/HeroSection";
+
 export default function Home() {
   return (
-    <div className="max-w-4xl w-full mx-auto">
-      <h1 className="text-center text-2xl font-bold">Class Vision</h1>
+    <div className="w-full">
+      <HeroSection />
+      <FeaturesSection />
+      <Footer />
     </div>
-  )
+  );
 }
