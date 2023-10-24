@@ -10,8 +10,8 @@ const Page = () => {
         <div className="relative md:static md:bg-dark-blue md:flex-1 flex items-center justify-center flex-col p-8 sm:w-full">
             <div className="text-white w-full h-full flex items-center">
                 <div >
-                    <h1 className="text-center md:text-left text-4xl md:text-7xl font-medium">Witaj!</h1>
-                    <p className="w-full text-md text-center md:text-left md:text-xl mt-2 md:w-2/3">Uzupełnij poniższe pola aby się zalogować. Podaj hasło jakie otrzymałeś/aś od szkoły. Po zalogowaniu się pierwszy raz możesz je zmienić na własne</p>
+                    <h1 className="text-center md:text-left text-4xl md:text-7xl font-raleway-medium">Witaj!</h1>
+                    <p className="w-full text-md text-center font-raleway-regular md:text-left md:text-xl mt-2 md:w-2/3">Uzupełnij poniższe pola aby się zalogować. Podaj hasło jakie otrzymałeś/aś od szkoły. Po zalogowaniu się pierwszy raz możesz je zmienić na własne</p>
                 </div>
             </div>
             <div className="w-full hidden md:block">
@@ -21,7 +21,7 @@ const Page = () => {
         </div>
         <div className="md:flex-1  flex items-center justify-center ">
             {/* FORMULARZ LOGOWANIA */}
-            <form className="max-w-2xl w-full flex flex-col gap-6 px-10" action="">
+            <form className="max-w-2xl w-full flex flex-col gap-6 px-10" method="post" action="">
                 <input type="email" name="email" id="email" className="w-full px-4 py-3 rounded-full outline-none border-2 shadow-lg shadow-transparent  focus:shadow-dark-blue/20 focus:border-light-blue" placeholder="E-Mail"/>
                 <input type="password" name="haslo" id="haslo" className="w-full px-4 py-3 rounded-full outline-none border-2 shadow-lg shadow-transparent  focus:shadow-dark-blue/20 focus:border-light-blue" placeholder="Hasło"/>
                 <Button text="Zaloguj się" colorful type="submit" optionalStyle="rounded-full"/>

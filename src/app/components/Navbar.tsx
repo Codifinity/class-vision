@@ -22,8 +22,8 @@ export default function Navbar() {
           </div>
         </nav>
       ) : (
-        <nav>
-          <div className="flex flex-row justify-between items-center py-4 border-b-[1px] border-gray-300 shadow-sm">
+        <nav className="sticky top-0 w-full">
+          <div className="flex flex-row justify-between items-center py-4 bg-white border-b-[1px] border-gray-300 shadow-sm">
             <div className="pl-5">asd</div>
             <div className="pr-4 " onClick={() => setOpen(!isOpen)}>
               {isOpen ? (
@@ -36,7 +36,7 @@ export default function Navbar() {
           <div
             className={`${
               isOpen
-                ? "flex flex-col justify-start items-center bg-[#e1e1e1] backdrop-blur-md bg-opacity-20 h-screen pt-5 gap-8"
+                ? "flex flex-col justify-start items-center absolute bg-[#e1e1e1]/20 backdrop-blur-md h-screen w-full pt-5 gap-8"
                 : "hidden"
             }`}
           >
