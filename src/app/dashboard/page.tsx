@@ -10,7 +10,7 @@ export default function Page() {
     <div className="w-full">
       <Navbar />
       {/* MODAL ZMIANY HASLA */}
-      {/* <RegisterModal/> */}
+      {<RegisterModal/>}
       <WelcomeSection />
     </div>
   );
