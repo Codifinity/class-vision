@@ -9,7 +9,7 @@ import Hamburger from "../../assets/hamburger.png";
 export default function Navbar() {
   const isDesktop = useMediaQuery("(min-width: 1280px)");
   const [isOpen, setOpen] = useState(false);
-
+  
   return (
     <>
       {isDesktop ? (
