@@ -39,7 +39,7 @@ export default function ExamsSchedule() {
         <Exams exams={exams} />
       </div>
       <div className="w-full lg:mt-16 lg:mb-5 font-semibold text-xl text-[#00BBE4] lg:mx-10 mx-5 mt-10 mb-5">
-        <Link href="#">Zobacz wszystkie oceny</Link>
+        <Link href="#">Zobacz wszystkie sprawdziany</Link>
       </div>
     </section>
   );
