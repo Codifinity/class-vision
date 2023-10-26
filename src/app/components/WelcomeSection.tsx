@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function Navbar() {
+export default function WelcomeSection() {
   return (
     <section className="lg:ml-10 border-[1px] lg:w-4/6 2xl:w-[70rem] p-3 py-7 lg:px-16 px-8 border-gray-300 font-raleway-medium shadow-md md:w-full w-full rounded-lg">
       <h1 className="font-raleway-bold lg:text-6xl my-3 text-2xl md:text-4xl">
