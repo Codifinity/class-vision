@@ -20,6 +20,7 @@ let grades: GradesObjectProps[] = [
   { subjectName: "Historia", type: "Inne", grade: "2" },
   { subjectName: "Geografia", type: "Sprawdzian", grade: "5" },
   { subjectName: "Język angielski", type: "Zadanie domowe", grade: "5" },
+  { subjectName: "Język angielski", type: "Inne", grade: "2" },
 ];
 
 export default function LastGrades() {
@@ -47,13 +48,13 @@ const Grades = ({ names }: GradesProps) => {
     <>
       {names.map((name, nameId) => (
         <div
-          className="flex flex-row justify-start items-start border-b-2 border-gray-300 w-11/12 mx-auto pt-2 pb-2 my-2 mt-4"
+          className="flex flex-row justify-start items-start border-b-2 border-gray-300 w-11/12 mx-auto pt-2 pb-2 my-2 mt-4 "
           key={nameId}
         >
           <div className="flex flex-row justify-start items-center pr-3 pl-4">
             <p className="font-raleway-semibold text-xl">{name}: </p>
           </div>
-          <GradesItems grades={grades} subject={name} />
+          <GradesItems grades={grades} subject={name}/>
         </div>
       ))}
     </>
@@ -72,7 +73,7 @@ const GradesItems = ({ grades, subject }: GradesItemsProps) => {
         <div key={gradeId}>
           {subject === grade.subjectName ? (
             <div
-              className={`flex justify-center items-center ${
+              className={`flex justify-center items-center mx-1 ${
                 grade.type === "Sprawdzian"
                   ? "bg-[#ED2C2C47] text-[#DB0909] rounded-md px-1 w-6 mt-0.5"
                   : ""
