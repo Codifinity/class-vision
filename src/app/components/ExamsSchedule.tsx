@@ -32,15 +32,15 @@ let exams: examsProps[] = [
 export default function ExamsSchedule() {
   return (
     <section className="lg:w-2/3 w-full shadow-md border-gray-300 border-[1px] rounded-lg min-h-[30rem]">
-      <h3 className="text-dark-blue font-raleway-bold text-2xl my-5 mx-7">
+      <h3 className="text-dark-blue font-bold text-2xl my-5 mx-7">
         Sprawdziany, kartkówki
       </h3>
       <div className="w-10/12 mx-auto">
         <Exams exams={exams} />
       </div>
-      <div className="w-full lg:mt-16 lg:mb-5 font-raleway-semibold text-xl text-[#00BBE4] lg:mx-10 mx-5 mt-10 mb-5">
-            <Link href="#">Zobacz wszystkie oceny</Link>
-        </div>
+      <div className="w-full lg:mt-16 lg:mb-5 font-semibold text-xl text-[#00BBE4] lg:mx-10 mx-5 mt-10 mb-5">
+        <Link href="#">Zobacz wszystkie oceny</Link>
+      </div>
     </section>
   );
 }
@@ -68,7 +68,7 @@ const Exams = ({ exams }: ExamProps) => {
               exam.type === 'odpowiedz' ? 'bg-[#339873]' : ''
             } rounded-t-lg py-1`}
           >
-            <h5 className="text-white font-raleway-bold flex justify-center items-center uppercase">
+            <h5 className="text-white font-bold flex justify-center items-center uppercase">
               {exam.subject}
             </h5>
           </div>
