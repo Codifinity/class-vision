@@ -39,7 +39,7 @@ export default function Timetable() {
           Plan lekcji
         </h3>
         <div
-          className={`w-10 ${isOpen ? "rotate-180" : ""}`}
+          className={`w-10 ${isOpen ? "rotate-180 z-0" : ""}`}
           onClick={() => setOpen(!isOpen)}
         >
           <Image src={Arrow} alt="" />
