@@ -33,7 +33,7 @@ export default function ExamsSchedule() {
   return (
     <section className="lg:w-2/3 w-full shadow-md border-gray-300 border-[1px] rounded-lg min-h-[30rem]">
       <h3 className="text-dark-blue font-raleway-bold text-2xl my-5 mx-7">
-        Ostatnie oceny
+        Sprawdziany, kartkówki
       </h3>
       <div className="w-10/12 mx-auto">
         <Exams exams={exams} />
