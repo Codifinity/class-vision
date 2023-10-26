@@ -4,45 +4,45 @@
 
 @font-face {
   font-family: 'raleway-black';
-  src: url(../fonts/Raleway-Black.ttf);
+  src: url('/assets/fonts/Raleway-Black.ttf');
 }
 
 @font-face {
   font-family: 'raleway-bold';
-  src: url(../fonts/Raleway-Bold.ttf);
+  src: url('/assets/fonts/raleway-bold');
 }
 
 @font-face {
   font-family: 'raleway-extrabold';
-  src: url(../fonts/Raleway-extrabold.ttf);
+  src: url('/assets/fonts/Raleway-extrabold.ttf');
 }
 
 @font-face {
   font-family: 'raleway-extralight';
-  src: url(../fonts/Raleway-Extralight.ttf);
+  src: url('/assets/fonts/Raleway-Extralight.ttf');
 }
 
 @font-face {
   font-family: 'raleway-light';
-  src: url(../fonts/Raleway-Light.ttf);
+  src: url('/assets/fonts/Raleway-Light.ttf');
 }
 
 @font-face {
   font-family: 'raleway-medium';
-  src: url(../fonts/Raleway-Medium.ttf);
+  src: url('/assets/fonts/Raleway-Medium.ttf');
 }
 
 @font-face {
   font-family: 'raleway-regular';
-  src: url(.././fonts/Raleway-Regular.ttf);
+  src: url('/assets/fonts/Raleway-Regular.ttf');
 }
 
 @font-face {
   font-family: 'raleway-semibold';
-  src: url(.././fonts/Raleway-Semibold.ttf);
+  src: url('/assets/fonts/Raleway-Semibold.ttf');
 }
 
 @font-face {
   font-family: 'raleway-thin';
-  src: url(.././fonts/Raleway-Thin.ttf);
+  src: url('/assets/fonts/Raleway-Thin.ttf');
 }
