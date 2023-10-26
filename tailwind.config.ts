@@ -8,17 +8,6 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      fontFamily: {
-        'raleway-black': ['raleway-black'],
-        'raleway-bold': ['raleway-bold'],
-        'raleway-extrabold': ['raleway-extrabold'],
-        'raleway-extralight': ['raleway-extralight'],
-        'raleway-light': ['raleway-light'],
-        'raleway-medium': ['raleway-medium'],
-        'raleway-regular': ['raleway-regular'],
-        'raleway-semibold': ['raleway-semibold'],
-        'raleway-thin': ['raleway-thin']
-      },
       colors: {
         'dark-blue': '#00567B',
         'light-blue': '#00BBE4',
