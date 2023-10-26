@@ -20,7 +20,7 @@ export default function LoginForm() {
         {            
             push('/dashboard');
         }    
-    }, [])
+    }, [push])
     
     const logInForm = (e:any) => {         
         const email_s:string    = email;
