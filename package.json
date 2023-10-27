@@ -15,7 +15,9 @@
     "next-auth": "^4.24.3",
     "react": "^18",
     "react-dom": "^18",
-    "tailwind-merge": "^1.14.0"
+    "react-icons": "^4.11.0",
+    "tailwind-merge": "^1.14.0",
+    "tailwind-scrollbar": "^3.0.5"
   },
   "devDependencies": {
     "@types/node": "^20",

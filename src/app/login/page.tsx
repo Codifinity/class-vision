@@ -1,9 +1,10 @@
+
 import LoginForm from "../components/LoginForm";
 
 import Image from "next/image";
 
-import ClassBgImg from "../../assets/Class-bg2.svg";
-import VisionBgImg from "../../assets/Vision-bg2.svg";
+import ClassBgImg from '../../assets/Class-bg2.svg';
+import VisionBgImg from '../../assets/Vision-bg2.svg';
 
 const Page = () => {
     return (
