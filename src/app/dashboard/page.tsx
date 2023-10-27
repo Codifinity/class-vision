@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from 'react';
 
 import Navbar from "../components/Navbar";
@@ -8,12 +10,10 @@ import LastGrades from '../components/LastGrades';
 import ExamsSchedule from '../components/ExamsSchedule';
 
 export default function Page() {
-
   return (
     <div className="w-full">
       <Navbar />
-      {/* MODAL ZMIANY HASLA */}
-      {/* <RegisterModal/> */}
+        <RegisterModal/>
       <div className='w-10/12 mx-auto'>
         <div className='flex lg:flex-row flex-col justify-between items-start my-6'>
           <div className='w-full lg:w-auto'>
