@@ -51,7 +51,7 @@ export default function Navbar() {
           >
             <Button colorful={true} text={"VisionMarket"} />
             <Button colorful={true} text={"VisionChat"} />
-            <Button colorful={true}  onClick={signOut} text={"Wyloguj"} optionalStyle="bg-white"/>
+            <Button colorful={false}  onClick={signOut} text={"Wyloguj"} optionalStyle="bg-white"/>
           </div>
         </nav>
       )}
