@@ -22,7 +22,7 @@ export default function Page() {
     {
       push("/login");
     }
-  }, [])
+  }, [push])
   
   return (
     <div className="w-full">
