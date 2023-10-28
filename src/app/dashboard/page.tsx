@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useRouter } from 'next/navigation';
 
 import Navbar from '../components/Navbar';
 import RegisterModal from '../components/RegisterModal';
@@ -9,7 +10,20 @@ import Timetable from '../components/Timetable';
 import LastGrades from '../components/LastGrades';
 import ExamsSchedule from '../components/ExamsSchedule';
 
+import {auth} from "../firebase"
+
 export default function Page() {
+  const { push } = useRouter()
+  
+  React.useEffect(() => {
+    const user = auth.currentUser;
+    
+    if(!user)
+    {
+      push("/login");
+    }
+  }, [push])
+  
   return (
     <div className="w-full">
       <Navbar />
