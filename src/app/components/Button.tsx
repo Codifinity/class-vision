@@ -6,12 +6,14 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   colorful: boolean;
   text: string;
   optionalStyle?: string;
+  onClick_i?: any;
 }
 
 export default function Button({
   colorful,
   text,
   optionalStyle,
+  onClick_i,
   ...props //zeby dzialal onClick i submit formularza
 }: ButtonProps) {
   return (

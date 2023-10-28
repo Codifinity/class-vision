@@ -31,7 +31,7 @@ let exams: examsProps[] = [
 
 export default function ExamsSchedule() {
   return (
-    <section className="lg:w-2/3 w-full shadow-md border-gray-300 border-[1px] rounded-lg min-h-[30rem]">
+    <section className="lg:w-5/6 w-full shadow-md border-gray-300 border-[1px] rounded-lg min-h-[30rem]">
       <h3 className="text-dark-blue font-bold text-2xl my-5 mx-7">
         Sprawdziany, kartkówki
       </h3>
@@ -39,7 +39,7 @@ export default function ExamsSchedule() {
         <Exams exams={exams} />
       </div>
       <div className="w-full lg:mt-16 lg:mb-5 font-semibold text-xl text-[#00BBE4] lg:mx-10 mx-5 mt-10 mb-5">
-        <Link href="#">Zobacz wszystkie oceny</Link>
+        <Link href="#">Zobacz wszystkie sprawdziany</Link>
       </div>
     </section>
   );
