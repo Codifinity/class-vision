@@ -5,11 +5,13 @@ import {
   BsSearch,
   BsFillCameraVideoFill
 } from 'react-icons/bs';
-import { AiFillPhone } from 'react-icons/ai';
+import { GrAttachment, GrEmoji } from 'react-icons/gr';
+import { AiFillPhone, AiOutlineCamera } from 'react-icons/ai';
+import { MdSend } from 'react-icons/md';
 import ProfilePicture from '../../components/ProfilePicture';
 import ConversationCard from '../../components/ConversationCard';
 import PinnedChat from '../../components/PinnedChat';
-import Image from 'next/image';
+import IconButton from '@/app/components/IconButton';
 
 const Page = () => {
   return (
@@ -36,9 +38,9 @@ const Page = () => {
 
             {/* Edit profile */}
             <div className="flex-2 -mt-4">
-              <button className="p-2 rounded-md hover:bg-gray-200 self-end">
+              <IconButton>
                 <BsFillPencilFill size="1.4em" className="text-custom-dark" />
-              </button>
+              </IconButton>
             </div>
           </div>
 
@@ -135,7 +137,7 @@ ale za to zrobił to z wielką gracją"
         {/* Conversation */}
         <div className="w-3/4 h-full bg-white flex flex-col px-8 py-6 gap-4">
           {/* Conversation target user */}
-          <div className=" w-full flex items-center justify-between border-b-2 border-custom-dark/30 pb-4 px-4">
+          <div className="w-full flex items-center justify-between border-b-2 border-custom-dark/30 pb-4 px-4 flex-4">
             {/* Picture, name */}
             <div className="flex items-center gap-4">
               <ProfilePicture
@@ -158,10 +160,45 @@ ale za to zrobił to z wielką gracją"
           </div>
 
           {/* Chatbox */}
-          <div className="bg-red-200 w-full">chat</div>
+          <div className="bg-red-200 w-full flex-1">chat</div>
 
           {/* Message writing box */}
-          <div className="bg-red-200 w-full"></div>
+          <div className="w-full flex-4">
+            <div className="w-full border-t-2 border-custom-dark/30 pt-4 px-4">
+              <div className="bg-light-gray rounded-full w-full overflow-hidden flex items-center py-2 px-2 gap-2">
+                {/* Text input */}
+                <div className="flex-1">
+                  <input
+                    type="text"
+                    className="w-full outline-none py-2 bg-light-gray "
+                    placeholder="Aa"
+                  />
+                </div>
+
+                {/* cta button icons */}
+                <div className="flex-4">
+                  <IconButton>
+                    <GrAttachment size="1.4em" />
+                  </IconButton>
+
+                  <IconButton>
+                    <AiOutlineCamera size="1.4em" />
+                  </IconButton>
+
+                  <IconButton>
+                    <GrEmoji size="1.4em" />
+                  </IconButton>
+                </div>
+
+                {/* send button */}
+                <div className="flex-4">
+                  <button className="bg-blue hover:bg-light-blue rounded-full p-2">
+                    <MdSend size="1.4em" className="text-white" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
