@@ -7,6 +7,7 @@ import ProfilePicture from '../../components/ProfilePicture';
 import ConversationCard from '../../components/ConversationCard';
 import PinnedChat from '../../components/PinnedChat';
 import IconButton from '@/app/components/IconButton';
+import { useRouter } from 'next/navigation';
 
 // Icons
 import {
@@ -16,19 +17,120 @@ import {
   BsArrowLeftShort
 } from 'react-icons/bs';
 import { GrAttachment, GrEmoji } from 'react-icons/gr';
-import { AiFillPhone, AiOutlineCamera } from 'react-icons/ai';
+import { AiFillPhone, AiOutlineCamera, AiOutlineSwapRight } from 'react-icons/ai';
 import { MdSend } from 'react-icons/md';
 
 //Hook
 import useMediaQuery from '@/hooks/useMediaQuery';
+import {auth, db} from "../../firebase"
+import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { setPersistence } from 'firebase/auth';
+import { doc, updateDoc, getDoc, getDocs } from 'firebase/firestore';
+import { Allura } from 'next/font/google';
+
+// Define interfaces for user and role
+interface User {
+  id: string;
+  [key: string]: any;
+}
+
+interface Role {
+  name: string;
+  users: User[];
+}
 
 const Page = () => {
   const [isChatOpen, setIsChatOpen] = React.useState<boolean>(false);
   const isMobile = useMediaQuery('(max-width: 1280px)');
-  // Trzeba zaimplementowac otwarcie danego chatu na podstawie np. "id"
+  const [userData, setUserData] = React.useState<any>({});
+
+  const [studentsData, setStudentsData] = React.useState<User[]>([]);
+  const [parentsData, setParentsData] = React.useState<User[]>([]);
+  const [teacherData, setTeacherData] = React.useState<User[]>([]);
+  const { push } = useRouter()
+
   const toggleChat = (isOpen: boolean) => {
     setIsChatOpen(isOpen);
   };
+
+  async function getUser(role:string)
+  {
+    const user = auth.currentUser;    
+    if(user)
+    {            
+        const uid:any = user?.uid;
+        const docRef = doc(db, "Users", "commonUsers", role, uid);
+
+        const docSnap = await getDoc(docRef);
+        if (docSnap.exists()) 
+        {                
+          let data = JSON.stringify(docSnap.data());  
+          setUserData(docSnap.data());
+          return data;
+        }
+    }
+  }
+  const fetchUsers = async (
+    role: string,
+    setUser: React.Dispatch<React.SetStateAction<User[]>>
+  ) => {
+    const usersCollection = collection(
+      db,
+      'Users',
+      'commonUsers',
+      role
+    );
+  
+    try {
+      const snapshot = await getDocs(usersCollection);
+
+      if (!snapshot.empty) {
+        const userList: User[] = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          const grades = data.grades || [];
+
+          return {
+            id: doc.id,
+            class: data.class || '',
+            email: data.email || '',
+            grades,
+            hasPasswordChanged: data.hasPasswordChanged || false,
+            name: data.name || '',
+            surname: data.surname || '',
+            parent: data.parent || '',
+            school: data.school || '',
+          };
+        });
+
+        setUser(userList);
+      } else {
+        console.log(`No documents found for ${role}`);
+      }
+    } catch (error) {
+      console.error(`Error fetching ${role} users:`, error);
+    }
+  };
+
+  React.useEffect(() => {
+    const checkIfUserIsLoggedAndGetUsers = async() => {
+      if(!auth.currentUser)
+      {
+        push("/login");
+      }
+      else
+      {
+        getUser("Students").then(async() => {
+          fetchUsers('Teachers', setTeacherData);
+          fetchUsers('Parents', setParentsData);
+          fetchUsers('Students', setStudentsData);
+        });
+      }
+    }
+
+    setTimeout(async() => {
+      checkIfUserIsLoggedAndGetUsers()
+    }, 200);
+  }, [push])
 
   return (
     <div className="w-full h-screen">
@@ -52,7 +154,7 @@ const Page = () => {
             <div className=" flex-1">
               {/* Imie nazwisko */}
               <h1 className="text-blue text-2xl lg:text-4xl font-bold">
-                John Doe
+                { userData['name'] + " " + userData['surname']}
               </h1>
               {/* opis */}
               <p className="text-gray-500 text-xs lg:text-md">Lorem ipsum</p>
@@ -81,86 +183,51 @@ const Page = () => {
           </div>
 
           {/* Chats */}
-          <div className="scrollbar-thin scrollbar-thumb-custom-dark/40 scrollbar-track-gray-200 overflow-y-scroll">
-            {/* Pinned chats */}
-            <PinnedChat
+          <div className="scrollbar-thin scrollbar-thumb-custom-dark/40 scrollbar-track-gray-200 overflow-y-scroll">        
+          {/*            <PinnedChat
               click={() => toggleChat(true)}
               src="/wycieczki-preview.jpg"
               name="Wycieczki"
               lastMessageUserName="Małgorzata"
               lastMessage="O której zbiórka?"
-              lastMessageTime="16:34"
-            />
-            {/* User chats */}
-            <ConversationCard
+              lastMessageTime="16:34"/> */}
+            {parentsData.map((parent) => {
+            return (
+              <ConversationCard 
+              key={parent.id}
               click={() => toggleChat(true)}
               src="/preview-pic.jpg"
-              name="Nauczyciel"
+              name={parent.name + " " + parent.surname}
               surname="1"
-              lastMessage="Pani syn niestety nie zdał,
-ale za to zrobił to z wielką gracją"
+              lastMessage="Cześć John Doe, wyrzuć śmieci"
               lastMessageTime="16:34"
-            />
+              />)
+            })}
 
-            <ConversationCard
+          {teacherData.map((teacher) => {
+            return (
+              <ConversationCard
+              key={teacher.id}
               click={() => toggleChat(true)}
               src="/preview-pic.jpg"
-              name="Nauczyciel"
+              name={teacher.name +  " " + teacher.surname}
               surname="1"
-              lastMessage="Pani syn niestety nie zdał,
-ale za to zrobił to z wielką gracją"
+              lastMessage="Cześć John Doe, prześlij mi swój projekt zegar w react"
               lastMessageTime="16:34"
-            />
-
-            <ConversationCard
+              />)
+            })}
+            {studentsData.map((student) => {
+            return student.id != auth.currentUser?.uid ? (
+              <ConversationCard
+              key={student.id}
               click={() => toggleChat(true)}
               src="/preview-pic.jpg"
-              name="Nauczyciel"
+              name={student.name + student.surname}
               surname="1"
-              lastMessage="Pani syn niestety nie zdał,
-ale za to zrobił to z wielką gracją"
+              lastMessage="Cześć John Doe, jutro kontrola, nie przynos niczego"
               lastMessageTime="16:34"
-            />
-
-            <ConversationCard
-              click={() => toggleChat(true)}
-              src="/preview-pic.jpg"
-              name="Nauczyciel"
-              surname="1"
-              lastMessage="Pani syn niestety nie zdał,
-ale za to zrobił to z wielką gracją"
-              lastMessageTime="16:34"
-            />
-
-            <ConversationCard
-              click={() => toggleChat(true)}
-              src="/preview-pic.jpg"
-              name="Nauczyciel"
-              surname="1"
-              lastMessage="Pani syn niestety nie zdał,
-ale za to zrobił to z wielką gracją"
-              lastMessageTime="16:34"
-            />
-
-            <ConversationCard
-              click={() => toggleChat(true)}
-              src="/preview-pic.jpg"
-              name="Nauczyciel"
-              surname="1"
-              lastMessage="Pani syn niestety nie zdał,
-ale za to zrobił to z wielką gracją"
-              lastMessageTime="16:34"
-            />
-
-            <ConversationCard
-              click={() => toggleChat(true)}
-              src="/preview-pic.jpg"
-              name="Nauczyciel"
-              surname="1"
-              lastMessage="Pani syn niestety nie zdał,
-ale za to zrobił to z wielką gracją"
-              lastMessageTime="16:34"
-            />
+              />): (<></>)
+            })}
           </div>
         </div>
 
