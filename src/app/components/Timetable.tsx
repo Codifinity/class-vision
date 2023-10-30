@@ -59,7 +59,7 @@ export default function Timetable() {
             </div>
           </div>
           <div className="w-full lg:mt-8 lg:mb-3 font-semibold text-xl text-[#00BBE4] lg:mx-5 mx-5 mt-8 mb-5">
-          <Link href="#">Zobacz pełny plan lekcji</Link>
+          <Link href="/lekcje">Zobacz pełny plan lekcji</Link>
           </div>
         </>
       ) : (
