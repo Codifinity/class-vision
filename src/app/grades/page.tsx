@@ -46,9 +46,9 @@ export default function Page() {
     <div className="w-full">
       <Navbar />
       <section className="border-[#B4B4B4] border-[1px] rounded-lg lg:w-auto lg:mx-5 my-3 w-auto mx-2 min-h-[30rem] shadow-md">
-        <div className="w-full flex flex-row justify-between items-center">
+        <div className="w-full flex md:flex-row flex-col justify-between items-center">
           <h3 className="font-semibold text-4xl pt-7 px-8">Oceny</h3>
-          <div className="mx-5">
+          <div className="md:mx-5 mx-0 md:pt-0 pt-3">
             <Dropdown />
           </div>
         </div>

@@ -1,72 +1,80 @@
-/* eslint-disable jsx-a11y/role-has-required-aria-props */
-import React, { useState } from 'react';
+import { Fragment, useState } from 'react';
+import { Listbox, Transition } from '@headlessui/react';
 import DropdownArrow from '../../assets/dropdown.svg';
 import Image from 'next/image';
 
-const Dropdown: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
+const subjects = [
+  { name: 'Wszytskie' },
+  { name: 'Język polski' },
+  { name: 'Język niemiecki' },
+  { name: 'Geografia' },
+  { name: 'Fizyka' },
+  { name: 'Matematyka' }
+];
+
+export default function Dropdown() {
+  const [selected, setSelected] = useState(subjects[0]);
+  const [open, setOpen] = useState(true);
 
   return (
-    <div className="relative inline-block text-left">
-      <div>
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          type="button"
-          className="inline-flex justify-between w-full rounded-md border border-[#3D3D3D] shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50"
-          id="options-menu"
-          aria-expanded={isOpen}
-          aria-haspopup="listbox"
-        >
-          Wybierz przedmiot
-          <Image
-            className={`ml-2 mt-0.5 transition-transform transform ${
-              isOpen ? '-rotate-180' : 'rotate-0'
-            }`}
-            src={DropdownArrow}
-            alt="Arrow"
-            width={16}
-            height={16}
-          />
-        </button>
-      </div>
-
-      {isOpen && (
-        <div className="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-          <div
-            role="listbox"
-            aria-orientation="vertical"
-            aria-labelledby="options-menu"
+    <div className=" w-72">
+      <Listbox value={selected} onChange={setSelected}>
+        <div className="relative mt-1">
+          <Listbox.Button onClick={() => setOpen(!open)} className="relative w-full cursor-default rounded-lg bg-white border-[1px] border-black py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
+            <span className="block truncate">{selected.name}</span>
+            <span
+              className={
+                'pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 '
+              }
+            >
+              {open ? (
+                <div>
+                  <Image src={DropdownArrow} alt="" />
+                </div>
+              ) : (
+                <div className="rotate-180">
+                  <Image src={DropdownArrow} alt="" />
+                </div>
+              )}
+            </span>
+          </Listbox.Button>
+          <Transition
+            as={Fragment}
+            leave="transition ease-in duration-100"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
           >
-            <div role="option" onClick={() => setIsOpen(false)}>
-              <div className="p-2 text-gray-700 cursor-pointer hover:bg-gray-100">
-                Matematyka
-              </div>
-            </div>
-            <div role="option" onClick={() => setIsOpen(false)}>
-              <div className="p-2 text-gray-700 cursor-pointer hover:bg-gray-100">
-                Język polski
-              </div>
-            </div>
-            <div role="option" onClick={() => setIsOpen(false)}>
-              <div className="p-2 text-gray-700 cursor-pointer hover:bg-gray-100">
-                Historia
-              </div>
-            </div>
-            <div role="option" onClick={() => setIsOpen(false)}>
-              <div className="p-2 text-gray-700 cursor-pointer hover:bg-gray-100">
-                Geografia
-              </div>
-            </div>
-            <div role="option" onClick={() => setIsOpen(false)}>
-              <div className="p-2 text-gray-700 cursor-pointer hover:bg-gray-100">
-                Język angielski
-              </div>
-            </div>
-          </div>
+            <Listbox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm">
+              {subjects.map((subject, subjectIdx) => (
+                <Listbox.Option
+                  key={subjectIdx}
+                  className={({ active }) =>
+                    `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                      active ? 'bg-blue/40 text-dark-blue' : 'text-gray-900'
+                    }`
+                  }
+                  value={subject}
+                >
+                  {({ selected }) => (
+                    <>
+                      <span
+                        className={`block truncate ${
+                          selected ? 'font-medium' : 'font-normal'
+                        }`} onClick={() => setOpen(!open)}
+                      >
+                        {subject.name}
+                      </span>
+                      {selected ? (
+                        <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-amber-600"></span>
+                      ) : null}
+                    </>
+                  )}
+                </Listbox.Option>
+              ))}
+            </Listbox.Options>
+          </Transition>
         </div>
-      )}
+      </Listbox>
     </div>
   );
-};
-
-export default Dropdown;
+}
