@@ -1,5 +1,4 @@
 'use client';
-import useMediaQuery from '@/hooks/useMediaQuery';
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Arrow from '../../assets/down-arrow.png';
@@ -30,7 +29,6 @@ let tomorrow: lessonObject[] = [
 ];
 
 export default function Timetable() {
-  const isDesktop = useMediaQuery('(min-width: 1280px)');
   const [isOpen, setOpen] = useState(true);
 
   return (
@@ -59,7 +57,7 @@ export default function Timetable() {
             </div>
           </div>
           <div className="w-full lg:mt-8 lg:mb-3 font-semibold text-xl text-[#00BBE4] lg:mx-5 mx-5 mt-8 mb-5">
-          <Link href="/lekcje">Zobacz pełny plan lekcji</Link>
+          <Link href="/lessons">Zobacz pełny plan lekcji</Link>
           </div>
         </>
       ) : (
