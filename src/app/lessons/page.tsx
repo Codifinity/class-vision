@@ -1,7 +1,6 @@
 'use client';
 import * as React from 'react';
 import Navbar from '../components/Navbar';
-import { useState } from 'react';
 
 interface lessonObject {
   name: string;
@@ -55,42 +54,52 @@ let friday: lessonObject[] = [
 ];
 
 export default function Page() {
-  const [isOpen, setOpen] = useState(true);
-
   return (
     <div className="w-full">
       <Navbar />
       <section className="border-gray-300 border-[1px] lg:w-auto mx-3 w-auto rounded-lg px-5 lg:my-4 mt-8 py-8 shadow-md ">
         <div className="flex flex-row items-center justify-between my-2 mb-3 mx-3">
-          <h3 className="text-black font-semibold text-4xl pb-4 pl-2">Plan lekcji</h3>
+          <h3 className="text-black font-semibold text-4xl pb-4 pl-2">
+            Plan lekcji
+          </h3>
         </div>
         <div className="grid lg:grid-cols-3 grid-cols-1 md:grid-cols-2 md:mx-0 gap-x-2 gap-y-8 lg:mx-2">
           <div className="border-gray-300 border-[1px] rounded-lg lg:mt-0 mt-4 py-4 shadow-md lg:mx-3 mx-1">
-            <p className="text-xl font-semibold border-b-[1px] border-gray-300 w-full text-center pb-3">Poniedziałek</p>
+            <p className="text-xl font-semibold border-b-[1px] border-gray-300 w-full text-center pb-3">
+              Poniedziałek
+            </p>
             <div className="flex flex-col justify-center items-start mt-2 px-5">
               <TimetableItem lessons={monday} />
             </div>
           </div>
           <div className="border-gray-300 border-[1px] rounded-lg lg:mt-0 mt-4 py-4 shadow-md lg:mx-3 mx-1">
-            <p className="text-xl font-semibold border-b-[1px] border-gray-300 w-full text-center pb-3">Wtorek</p>
+            <p className="text-xl font-semibold border-b-[1px] border-gray-300 w-full text-center pb-3">
+              Wtorek
+            </p>
             <div className="flex flex-col justify-center items-start mt-2 px-5">
               <TimetableItem lessons={tuesday} />
             </div>
           </div>
           <div className="border-gray-300 border-[1px] rounded-lg lg:mt-0 mt-4 py-4 shadow-md lg:mx-3 mx-1">
-            <p className="text-xl font-semibold border-b-[1px] border-gray-300 w-full text-center pb-3">Środa</p>
+            <p className="text-xl font-semibold border-b-[1px] border-gray-300 w-full text-center pb-3">
+              Środa
+            </p>
             <div className="flex flex-col justify-center items-start mt-2 px-5">
               <TimetableItem lessons={wednesday} />
             </div>
           </div>
           <div className="border-gray-300 border-[1px] rounded-lg lg:mt-0 mt-4 py-4 shadow-md lg:mx-3 mx-1">
-            <p className="text-xl font-semibold border-b-[1px] border-gray-300 w-full text-center pb-3">Czwartek</p>
+            <p className="text-xl font-semibold border-b-[1px] border-gray-300 w-full text-center pb-3">
+              Czwartek
+            </p>
             <div className="flex flex-col justify-center items-start mt-2 px-5">
               <TimetableItem lessons={thursday} />
             </div>
           </div>
           <div className="border-gray-300 border-[1px] rounded-lg lg:mt-0 mt-4 py-4 shadow-md lg:mx-3 mx-1">
-            <p className="text-xl font-semibold border-b-[1px] border-gray-300 w-full text-center pb-3">Piątek</p>
+            <p className="text-xl font-semibold border-b-[1px] border-gray-300 w-full text-center pb-3">
+              Piątek
+            </p>
             <div className="flex flex-col justify-center items-start mt-2 px-5">
               <TimetableItem lessons={friday} />
             </div>
