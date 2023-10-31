@@ -25,14 +25,14 @@ let grades: GradesObjectProps[] = [
 
 export default function LastGrades() {
   return (
-    <section className="border-gray-300 border-[1px] rounded-lg lg:w-2/3 w-full min-h-[30rem] shadow-md">
+    <section className="border-gray-300 border-[1px] rounded-lg lg:w-2/3 xl:w-1/2 w-full min-h-[30rem] shadow-md">
       <h3 className="text-dark-blue font-bold text-2xl my-5 mx-7">
         Ostatnie oceny
       </h3>
       <div>
         <Grades names={subjects} />
         <div className="w-full lg:mt-16 lg:mb-5 font-semibold text-xl text-[#00BBE4] lg:mx-10 mx-5 mt-10 mb-5">
-          <Link href="#">Zobacz wszystkie oceny</Link>
+          <Link href="/grades">Zobacz wszystkie oceny</Link>
         </div>
       </div>
     </section>

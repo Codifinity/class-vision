@@ -32,7 +32,7 @@ export default function Page() {
         <div className="flex lg:flex-row flex-col justify-between items-start my-6">
           <div className="w-full lg:w-auto">
             <WelcomeSection />
-            <div className="flex lg:flex-row flex-col lg:ml-10 lg:justify-between items-start justify-center w-full mt-4 lg:gap-10 gap-5">
+            <div className="flex lg:flex-row flex-col lg:ml-10 lg:justify-between items-start justify-center xl:w-[70rem] w-full mt-4 lg:gap-10 xl:gap-5 gap-5">
               <LastGrades />
               <ExamsSchedule />
             </div>
