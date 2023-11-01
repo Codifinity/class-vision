@@ -18,17 +18,18 @@ import {
 } from 'react-icons/bs';
 import { GrAttachment, GrEmoji } from 'react-icons/gr';
 import { AiFillPhone, AiOutlineCamera, AiOutlineSwapRight } from 'react-icons/ai';
-import { MdSend } from 'react-icons/md';
+import { MdElectricalServices, MdSend } from 'react-icons/md';
 
 //Hook
 import useMediaQuery from '@/hooks/useMediaQuery';
-import {auth, db} from "../../firebase"
-import { collection, query, where, onSnapshot } from 'firebase/firestore';
-import { setPersistence } from 'firebase/auth';
-import { doc, updateDoc, getDoc, getDocs } from 'firebase/firestore';
-import { Allura } from 'next/font/google';
 
-// Define interfaces for user and role
+// Firestore
+import {auth, db} from "../../firebase"
+import { collection, query, where, onSnapshot, setDoc, addDoc, orderBy } from 'firebase/firestore';
+import { doc, updateDoc, getDoc, getDocs } from 'firebase/firestore';
+import { Timestamp } from 'firebase/firestore';
+import 'firebase/firestore';
+
 interface User {
   id: string;
   [key: string]: any;
@@ -41,18 +42,125 @@ interface Role {
 
 const Page = () => {
   const [isChatOpen, setIsChatOpen] = React.useState<boolean>(false);
+  const [chatContent, setChatContent] = React.useState<string>("");  
+  const [messages, setMessages] = React.useState<any[]>();  
   const isMobile = useMediaQuery('(max-width: 1280px)');
+
   const [userData, setUserData] = React.useState<any>({});
+  const [userData2, setUserData2] = React.useState<any>({});
 
   const [studentsData, setStudentsData] = React.useState<User[]>([]);
   const [parentsData, setParentsData] = React.useState<User[]>([]);
   const [teacherData, setTeacherData] = React.useState<User[]>([]);
+
   const { push } = useRouter()
 
-  const toggleChat = (isOpen: boolean) => {
+  const toggleChatPlain = async(isOpen: boolean) => {
     setIsChatOpen(isOpen);
   };
 
+  const toggleChat = async(isOpen: boolean, role:string, secondUserId:any) => {
+    setIsChatOpen(isOpen);
+
+    // get the user data from db
+    const docRef = doc(db, "Users", "commonUsers", role, secondUserId);
+    const docSnap = await getDoc(docRef);
+
+    console.log(docRef.path);
+    // if user exists
+    if (docSnap.exists()) 
+    {
+      console.log("user exists");
+      const data = docSnap.data();
+      data.id = docSnap.id;
+
+      // set the user in the state
+      setUserData2(data);
+
+      // check if the conversation exists
+      const user = auth.currentUser;
+      const convRef = doc(db, "conversations", (user?.uid + "_" + secondUserId));
+      const convSnap = await getDoc(convRef);
+  
+      if(!convSnap.exists())
+      {
+        // if conversation does not exists - create a plain documet
+        await setDoc(doc(db, "conversations", (user?.uid + "_" + secondUserId)), {});
+        console.log("converstaion does not exist");
+      }
+
+      resetChatMessages(user?.uid, data.id);
+    }
+    else
+    {
+
+    }
+  };
+
+  // load messages in chat
+  const loadChat = async(user2id:any) => {
+    const user = auth.currentUser;
+    const docName = user?.uid + "_" + user2id;
+
+    const docRef = doc(db, "conversations", docName);
+    const docSnap = await getDoc(docRef);    
+
+    if (docSnap.exists()) 
+    {
+      // if exists - get all document in messages subcollection
+      const collectionRef = collection(db, "conversations", docName, "messages")
+      const q = query(collectionRef, orderBy("timestamp"));
+      const querySnapshot = await getDocs(q);
+      
+      let messages:any[] = [];
+
+        querySnapshot.forEach((doc) => {    
+          const data = doc.data();
+          data.id = doc.id;
+          messages.push(data);
+      });
+
+      setMessages(messages);
+    } 
+    else
+    {
+      console.log("doc does not exists");
+      //await setDoc(doc(db, "conversations", docName), {});
+    }
+  }
+
+  const resetChatMessages = async(user1Id:any, user2Id:any) => {
+    const docName = user1Id + "_" + user2Id;      
+
+    const collectionRef = collection(db, "conversations", docName, "messages")
+    const q = query(collectionRef, orderBy("timestamp"));
+    const querySnapshot = await getDocs(q);
+
+    let messages:any[] = [];
+
+      querySnapshot.forEach((doc) => {      
+        const data = doc.data();
+        data.id = doc.id;
+        messages.push(data);      
+    });
+
+    setMessages(messages);
+  }
+
+  const sendMessage = async() => {
+    const user = auth.currentUser;
+    const docName = user?.uid + "_" + userData2.id;                        
+    await addDoc(collection(db, "conversations", docName, "messages",), {
+      sender: user?.uid,
+      content: chatContent,
+      timestamp: Timestamp.now()
+    })
+
+    setChatContent("");
+    resetChatMessages(user?.uid, userData2.id);
+  }
+
+  // get user with role 
   async function getUser(role:string)
   {
     const user = auth.currentUser;    
@@ -62,14 +170,20 @@ const Page = () => {
         const docRef = doc(db, "Users", "commonUsers", role, uid);
 
         const docSnap = await getDoc(docRef);
+
         if (docSnap.exists()) 
         {                
-          let data = JSON.stringify(docSnap.data());  
-          setUserData(docSnap.data());
-          return data;
+          const data = docSnap.data();
+          data.id = docSnap.id;
+
+          setUserData(data);
+          setUserData2(data);
+
+          return JSON.stringify(data);
         }
-    }
+    }    
   }
+
   const fetchUsers = async (
     role: string,
     setUser: React.Dispatch<React.SetStateAction<User[]>>
@@ -113,24 +227,31 @@ const Page = () => {
 
   React.useEffect(() => {
     const checkIfUserIsLoggedAndGetUsers = async() => {
-      if(!auth.currentUser)
+      const user = auth.currentUser;
+      if(!user)
       {
         push("/login");
       }
       else
       {
-        getUser("Students").then(async() => {
+        await getUser("Students").then(() => {
+          fetchUsers('Students', setStudentsData);
           fetchUsers('Teachers', setTeacherData);
           fetchUsers('Parents', setParentsData);
-          fetchUsers('Students', setStudentsData);
+          // fetch the chat between userData and userData2          
+          // if document does not exist return empty chat
+          // if user sends message add to collection messages (if exist) - if not create document with userData.id and userData2.id          
         });
+
+        loadChat(auth.currentUser?.uid);      
       }
     }
 
-    setTimeout(async() => {
-      checkIfUserIsLoggedAndGetUsers()
-    }, 200);
-  }, [push])
+    setTimeout(() => {
+      checkIfUserIsLoggedAndGetUsers();
+    }, 500);
+
+  }, [push]);
 
   return (
     <div className="w-full h-screen">
@@ -184,21 +305,34 @@ const Page = () => {
 
           {/* Chats */}
           <div className="scrollbar-thin scrollbar-thumb-custom-dark/40 scrollbar-track-gray-200 overflow-y-scroll">        
-          {/*            <PinnedChat
+          {/* <PinnedChat
               click={() => toggleChat(true)}
               src="/wycieczki-preview.jpg"
               name="Wycieczki"
               lastMessageUserName="Małgorzata"
               lastMessage="O której zbiórka?"
-              lastMessageTime="16:34"/> */}
+              lastMessageTime="16:34"/> */}              
+            {studentsData.map((student, index) => {
+            return(
+              <ConversationCard
+              key={student.id}
+              click={() => toggleChat(true, "Students", student.id)}
+              src="/preview-pic.jpg"
+              name={student.name}
+              surname={student.surname}
+              lastMessage="Cześć John Doe, jutro kontrola, nie przynos niczego"
+              lastMessageTime="16:34"            
+              />)
+            })}
+
             {parentsData.map((parent) => {
             return (
               <ConversationCard 
               key={parent.id}
-              click={() => toggleChat(true)}
+              click={() => toggleChat(true, "Parents", parent.id)}
               src="/preview-pic.jpg"
-              name={parent.name + " " + parent.surname}
-              surname="1"
+              name={parent.name}
+              surname={parent.name}
               lastMessage="Cześć John Doe, wyrzuć śmieci"
               lastMessageTime="16:34"
               />)
@@ -208,25 +342,13 @@ const Page = () => {
             return (
               <ConversationCard
               key={teacher.id}
-              click={() => toggleChat(true)}
+              click={() => toggleChat(true, "Teachers", teacher.id)}
               src="/preview-pic.jpg"
-              name={teacher.name +  " " + teacher.surname}
-              surname="1"
+              name={teacher.name}
+              surname={teacher.surname}
               lastMessage="Cześć John Doe, prześlij mi swój projekt zegar w react"
               lastMessageTime="16:34"
               />)
-            })}
-            {studentsData.map((student) => {
-            return student.id != auth.currentUser?.uid ? (
-              <ConversationCard
-              key={student.id}
-              click={() => toggleChat(true)}
-              src="/preview-pic.jpg"
-              name={student.name + student.surname}
-              surname="1"
-              lastMessage="Cześć John Doe, jutro kontrola, nie przynos niczego"
-              lastMessageTime="16:34"
-              />): (<></>)
             })}
           </div>
         </div>
@@ -242,7 +364,7 @@ const Page = () => {
             {/* Picture, name */}
             <div className="flex items-center gap-2 lg:gap-4">
               {isMobile && (
-                <button onClick={() => toggleChat(false)}>
+                <button onClick={() => toggleChatPlain(false)}>
                   <BsArrowLeftShort className="text-[2em] font-bold text-blue" />
                 </button>
               )}
@@ -251,7 +373,7 @@ const Page = () => {
                 alt="Conversation profile picture"
               />
               <h2 className="text-gray-500 text-xl lg:text-4xl font-bold">
-                Nauczyciel 1
+                {userData2['name'] + " " + userData2['surname']}
               </h2>
             </div>
 
@@ -268,7 +390,18 @@ const Page = () => {
           </div>
 
           {/* Chatbox */}
-          <div className="bg-red-200 w-full flex-1">chat</div>
+          <div className="bg-light-gray w-full flex-1 p-10">
+            {messages?.map((el) => {
+              return (                
+                (userData.id == el.sender) ? (
+                  <p className="my-[1vh] flex items-center justify-end text-l" key={el.id}>{el.content}</p>
+                ):
+                (
+                  <p className="my-[1vh] flex items-center justify-start text-l" key={el.id}>{el.content}</p>
+                )
+              )
+            })}
+          </div>
 
           {/* Message writing box */}
           <div className="w-full flex-4">
@@ -277,9 +410,11 @@ const Page = () => {
                 {/* Text input */}
                 <div className="flex-1">
                   <input
+                    onChange={(e) => setChatContent(e.target.value)}
+                    value={chatContent}
                     type="text"
                     className="w-full outline-none py-2 bg-light-gray "
-                    placeholder="Aa"
+                    placeholder="Aa"                    
                   />
                 </div>
 
@@ -300,7 +435,7 @@ const Page = () => {
 
                 {/* send button */}
                 <div className="flex-4">
-                  <button className="bg-blue hover:bg-light-blue rounded-full p-2">
+                  <button className="bg-blue hover:bg-light-blue rounded-full p-2" onClick={() => {sendMessage()}}>
                     <MdSend size="1.4em" className="text-white" />
                   </button>
                 </div>
