@@ -9,6 +9,7 @@ import PinnedChat from '../../components/PinnedChat';
 import IconButton from '@/app/components/IconButton';
 import { useRouter } from 'next/navigation';
 
+
 // Icons
 import {
   BsFillPencilFill,
@@ -16,6 +17,8 @@ import {
   BsFillCameraVideoFill,
   BsArrowLeftShort
 } from 'react-icons/bs';
+import Image from 'next/image';
+import Close from '../../../assets/close.png';
 import { GrAttachment, GrEmoji } from 'react-icons/gr';
 import { AiFillPhone, AiOutlineCamera, AiOutlineSwapRight } from 'react-icons/ai';
 import { MdElectricalServices, MdSend } from 'react-icons/md';
@@ -29,6 +32,8 @@ import { collection, query, where, onSnapshot, setDoc, addDoc, orderBy } from 'f
 import { doc, updateDoc, getDoc, getDocs } from 'firebase/firestore';
 import { Timestamp } from 'firebase/firestore';
 import 'firebase/firestore';
+import ChatModal from '@/app/components/ChatModal';
+import { useState } from 'react';
 
 interface User {
   id: string;
@@ -239,10 +244,17 @@ const Page = () => {
 
   }, [push]);
 
+    const [newConversation, setNewConversation] = useState(false)
+
   return (
     <div className="w-full h-screen">
       <Navbar />
-
+      <div className={`${newConversation? "block":"hidden"}`}>
+      <div className="lg:w-8 lg:h-8 w-7 h-7 mb-14 lg:top-44 top-36 md:top-40 md:left-[45rem] lg:left-[88rem] left-[20rem] absolute z-30" onClick={() => setNewConversation(!newConversation)}>
+      <Image src={Close} alt="zamknij" />
+              </div>
+        <ChatModal />
+      </div>
       <div className="flex h-[calc(100vh-5rem)]">
         {/* Sidebar */}
         <div
@@ -268,7 +280,7 @@ const Page = () => {
             </div>
 
             {/* Edit profile */}
-            <div className="flex-2 -mt-4">
+            <div className="flex-2 -mt-4" onClick={() => setNewConversation(true)}>
               <IconButton>
                 <BsFillPencilFill className="text-custom-dark text-[1em] lg:text-[1.4em]" />
               </IconButton>
