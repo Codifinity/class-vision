@@ -75,7 +75,7 @@ const Grades = ({ names }: GradesProps) => {
           <div className="flex flex-row justify-start items-center pr-3 pl-4 border-[#C8C8C8] border-r-[1px] py-1.5 h-full">
             <p className="font-semibold text-base lg:text-xl">{name} </p>
           </div>
-          <div className='flex justify-center items-start flex-wrap py-1'>
+          <div className='flex justify-center items-start flex-wrap lg:py-0 pb-1'>
             <GradesItems grades={grades} subject={name} />
           </div>
         </div>

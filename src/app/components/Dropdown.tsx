@@ -4,7 +4,7 @@ import DropdownArrow from '../../assets/dropdown.svg';
 import Image from 'next/image';
 
 const subjects = [
-  { name: 'Wszytskie' },
+  { name: 'Wszystkie' },
   { name: 'Język polski' },
   { name: 'Język niemiecki' },
   { name: 'Geografia' },
