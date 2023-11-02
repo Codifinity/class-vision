@@ -1,23 +1,24 @@
-"use client";
-import React, { useState } from "react";
-import Button from "./Button";
-import useMediaQuery from "@/hooks/useMediaQuery";
-import Image from "next/image";
-import Close from "../../assets/close.png";
-import Hamburger from "../../assets/hamburger.png";
-import { auth } from "../firebase"
+'use client';
+import React, { useState } from 'react';
+import Button from './Button';
+import useMediaQuery from '@/hooks/useMediaQuery';
+import Image from 'next/image';
+import Close from '../../assets/close.png';
+import Hamburger from '../../assets/hamburger.png';
+import { auth } from '../firebase';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function Navbar() {
   const isDesktop = useMediaQuery('(min-width: 1280px)');
   const [isOpen, setOpen] = useState(false);
-  const { push } = useRouter()
+  const { push } = useRouter();
 
   const signOut = () => {
-    localStorage.removeItem("authUser");
+    localStorage.removeItem('authUser');
     auth.signOut();
-    push("/");
-  }
+    push('/');
+  };
 
   const goToVisonChat = () => {
     push("/vision-chat");

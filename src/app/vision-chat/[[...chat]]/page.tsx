@@ -376,14 +376,18 @@ const Page = () => {
           </div>
 
           {/* Chatbox */}
-          <div className="bg-light-gray w-full flex-1 p-10">
+          <div className="bg-light-gray rounded-sm w-full flex-1 p-10">
             {messages?.map((el) => {
               return (                
                 (userData.id == el.sender) ? (
-                  <p className="my-[1vh] flex items-center justify-end text-l" key={el.id}>{el.content}</p>
+                  <div className='w-full flex items-center justify-end' key={el.id}>
+                    <p className="py-2 px-3 my-[1px] rounded-s-lg rounded-t-lg bg-blue text-white">{el.content}</p>
+                  </div>
                 ):
                 (
-                  <p className="my-[1vh] flex items-center justify-start text-l" key={el.id}>{el.content}</p>
+                  <div className='flex items-center justify-start'>
+                    <p className="my-[1px] py-2 px-3 rounded-e-lg rounded-t-lg bg-gray-300 text-black" key={el.id}>{el.content}</p>
+                  </div>
                 )
               )
             })}
