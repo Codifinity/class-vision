@@ -15,24 +15,24 @@ const RegisterModal = () => {
     const[newPassword2, setNewPassword2] = useState("")
     const[wasPasswordChanged, setPasswordChanged] = useState(true);    
 
-    async function checkUser()
+    async function checkUser(role:string)
     {        
         const user = auth.currentUser;    
         if(user)
         {            
             const uid:any = user?.uid;
-            const docRef = doc(db, "Students", uid);  
-        
+            const docRef = doc(db, "Users", "commonUsers", role, uid);                    
             const docSnap = await getDoc(docRef);
-            let data;
+            
             if (docSnap.exists()) 
-            {
-                data = docSnap.data();
+            {                
+                let data = docSnap.data();
                 const wasPasswordChanged_in = data['hasPasswordChanged'];
+
                 if(!wasPasswordChanged_in)
                 {
                     setPasswordChanged(wasPasswordChanged_in);                    
-                }            
+                }                
             }
         }
     }
@@ -47,7 +47,7 @@ const RegisterModal = () => {
         {
             updatePassword(user, password1).then(() => {
                 const uid:any = auth.currentUser?.uid;                                
-                updateDoc(doc(db, "Students", uid), {"hasPasswordChanged" : true}).then(() => setPasswordChanged(true)).catch((err) => {console.log(err.code); console.log(err.message)});
+                updateDoc(doc(db, "Users", "commonUsers", "Students", uid), {"hasPasswordChanged" : true}).then(() => setPasswordChanged(true)).catch((err) => {console.log(err.code); console.log(err.message)});
 
             }).catch((e) => {
                 console.log(e.code);
@@ -64,7 +64,7 @@ const RegisterModal = () => {
 
     React.useEffect(() => {
         setTimeout(async() => {
-            checkUser().catch((er) => { console.log(er.code + "\n" + er.message)}) }, 500);
+            checkUser("Students").catch((er) => { console.log(er.code + "\n" + er.message)}) }, 500);
         }, [])
     
     return (
