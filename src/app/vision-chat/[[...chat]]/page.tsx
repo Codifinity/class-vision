@@ -65,9 +65,7 @@ const Page = () => {
     // get the user data from db
     const docRef = doc(db, "Users", "commonUsers", role, secondUserId);
     const docSnap = await getDoc(docRef);
-
-    console.log(docRef.path);
-    // if user exists
+    
     if (docSnap.exists()) 
     {
       console.log("user exists");
@@ -90,10 +88,6 @@ const Page = () => {
       }
 
       resetChatMessages(user?.uid, data.id);
-    }
-    else
-    {
-
     }
   };
 
@@ -121,11 +115,6 @@ const Page = () => {
       });
 
       setMessages(messages);
-    } 
-    else
-    {
-      console.log("doc does not exists");
-      //await setDoc(doc(db, "conversations", docName), {});
     }
   }
 
@@ -237,10 +226,7 @@ const Page = () => {
         await getUser("Students").then(() => {
           fetchUsers('Students', setStudentsData);
           fetchUsers('Teachers', setTeacherData);
-          fetchUsers('Parents', setParentsData);
-          // fetch the chat between userData and userData2          
-          // if document does not exist return empty chat
-          // if user sends message add to collection messages (if exist) - if not create document with userData.id and userData2.id          
+          fetchUsers('Parents', setParentsData);     
         });
 
         loadChat(auth.currentUser?.uid);      

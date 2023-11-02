@@ -10,20 +10,82 @@ import Timetable from '../components/Timetable';
 import LastGrades from '../components/LastGrades';
 import ExamsSchedule from '../components/ExamsSchedule';
 
-import {auth} from "../firebase"
+import {db, auth} from "../firebase"
+import { doc, collection, getDoc, getDocs, query, where } from 'firebase/firestore';
 
 export default function Page() {
+  const [userData, setUserData] = React.useState<any>({name: "..."});
+  const [grades, setGrades]     = React.useState<[{id: string, subject: string, type: string, mark: string}]>([{id: '', subject: '', type: '', mark: '' }])
   const { push } = useRouter()
   
   React.useEffect(() => {
-    const user = auth.currentUser;
-    
-    if(!user)
-    {
-      push("/login");
+    const checkUserandGetUserData = async() => {
+      const user = auth.currentUser;
+      if(!user)
+        push("/login");
+
+      if(user?.uid !== undefined)
+      {
+        // get the role of user
+        const q             = query(collection(db, "UserRole"), where("userID", "==", user?.uid))
+        const querySnapshot = await getDocs(q);
+        let role:string     = "";
+        querySnapshot.forEach((doc) => {
+          role = doc.data()['role'];
+        })
+
+        // get the user data
+        const docRef  = doc(db, "Users", "commonUsers", role, user?.uid);
+        const docSnap = await getDoc(docRef);
+        let data:any  = {"school" : ""}
+        if(docSnap.exists())
+        {
+          data    = docSnap.data();
+          data.id = docSnap.id;
+
+          setUserData(data);
+        }
+
+        // get the grades of user
+        if(role == "Students")
+        {
+          const gradesQuery = query(collection(db, "Schools", data['school'], "Grades"));
+          const gradesSnap  = await getDocs(gradesQuery);
+          let grades:[{id: string, subject: string, type: string, mark: string}] = [{id: "", subject: "", type: "", mark: ""}];
+          let i = 0;
+
+          gradesSnap.forEach((el) => {
+            const data    = el.data();
+            let grade:any= {id: "", subject: "", type: "", mark:""};
+
+            grade.id      = el.id;
+            grade.subject = data['subject'];
+            grade.type    = data['type'];
+            grade.mark    = data['mark'];
+            
+            grades[i] = grade;
+            i++;
+          })
+
+          //console.log("size: " + grades.length)
+
+          //grades = [{id: "qDuWELWh1arzAzYq6kio", subject: "Matematyka", type: "Sprawdzian", mark: "4" }]
+          //console.log(grades);
+
+          if(grades[0].id != "")
+          {
+            //setGrades([{id: "", subject: "Matematyka", type: "Sprawdzian", mark: "3" }])
+            setGrades(grades);
+          }
+          //setGrades([{id: "", subject: 'Matematyka', type: 'Sprawdzian', mark: '3' }])
+          //setGrades(grades);
+        }
+      }
     }
+
+    setTimeout(async() => checkUserandGetUserData(), 200)
   }, [push])
-  
+
   return (
     <div className="w-full">
       <Navbar />
@@ -31,11 +93,15 @@ export default function Page() {
       <div className="w-10/12 mx-auto">
         <div className="flex lg:flex-row flex-col justify-between items-start my-6">
           <div className="w-full lg:w-2/3">
-            <WelcomeSection />
+            <WelcomeSection userName={userData['name']}/>
+
             <div className="flex lg:flex-row flex-col lg:justify-between items-start justify-center 2xl:w-[70rem] w-full mt-4 lg:gap-10 2xl:gap-5 gap-5">
-              <LastGrades />
+              <LastGrades grades={grades}/>
               <ExamsSchedule />
             </div>
+
+
+
           </div>
           <Timetable />
         </div>

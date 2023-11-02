@@ -2,7 +2,8 @@ import Link from 'next/link';
 import React from 'react';
 
 interface GradesObjectProps {
-  subjectName: string;
+  id: string;
+  subject: string;
   type: string;
   grade: string;
 }
@@ -14,23 +15,27 @@ let subjects = [
   'Geografia',
   'Język angielski'
 ];
+/*
 let grades: GradesObjectProps[] = [
-  { subjectName: 'Matematyka', type: 'Sprawdzian', grade: '3' },
-  { subjectName: 'Język polski', type: 'Kartkówka', grade: '1' },
-  { subjectName: 'Historia', type: 'Inne', grade: '2' },
-  { subjectName: 'Geografia', type: 'Sprawdzian', grade: '5' },
-  { subjectName: 'Język angielski', type: 'Zadanie domowe', grade: '5' },
-  { subjectName: 'Język angielski', type: 'Inne', grade: '2' }
-];
+  {id: "", subject: 'Matematyka',      type: 'Sprawdzian',     grade: '3' },
+  {id: "", subject: 'Język polski',    type: 'Kartkówka',      grade: '1' },
+  {id: "", subject: 'Historia',        type: 'Inne',           grade: '2' },
+  {id: "", subject: 'Geografia',       type: 'Sprawdzian',     grade: '5' },
+  {id: "", subject: 'Język angielski', type: 'Zadanie domowe', grade: '5' },
+  {id: "", subject: 'Język angielski', type: 'Inne',           grade: '2' }
+];*/
 
-export default function LastGrades() {
+interface LastGradesProps {
+  grades:[{id: string, subject: string, type: string, mark: string}]
+}
+export default function LastGrades({grades}:LastGradesProps) {
   return (
     <section className="border-gray-300 border-[1px] rounded-lg lg:w-2/3 xl:w-1/2 w-full min-h-[30rem] shadow-md">
       <h3 className="text-dark-blue font-bold text-2xl my-5 mx-7">
         Ostatnie oceny
       </h3>
       <div>
-        <Grades names={subjects} />
+        <Grades names={subjects} grades={grades}/>
         <div className="w-full lg:mt-16 lg:mb-5 font-semibold text-xl text-[#00BBE4] lg:mx-10 mx-5 mt-10 mb-5">
           <Link href="/grades">Zobacz wszystkie oceny</Link>
         </div>
@@ -40,10 +45,11 @@ export default function LastGrades() {
 }
 
 interface GradesProps {
-  names: string[];
+  names: string[],
+  grades:[{id: string, subject: string, type: string, mark: string}]
 }
 
-const Grades = ({ names }: GradesProps) => {
+const Grades = ({ names, grades }: GradesProps) => {
   return (
     <>
       {names.map((name, nameId) => (
@@ -62,7 +68,7 @@ const Grades = ({ names }: GradesProps) => {
 };
 
 interface GradesItemsProps {
-  grades: GradesObjectProps[];
+  grades:[{id: string, subject: string, type: string, mark: string}],
   subject: string;
 }
 
@@ -71,7 +77,7 @@ const GradesItems = ({ grades, subject }: GradesItemsProps) => {
     <>
       {grades.map((grade, gradeId) => (
         <div key={gradeId}>
-          {subject === grade.subjectName ? (
+          {subject === grade.subject ? (
             <div
               className={`flex justify-center items-center mx-1 ${
                 grade.type === 'Sprawdzian'
@@ -91,7 +97,7 @@ const GradesItems = ({ grades, subject }: GradesItemsProps) => {
                   : ''
               } `}
             >
-              <p>{grades[gradeId].grade}</p>
+              <p>{grades[gradeId].mark}</p>
             </div>
           ) : (
             <></>

@@ -19,6 +19,10 @@ export default function Navbar() {
     push("/");
   }
 
+  const goToVisonChat = () => {
+    push("/vision-chat");
+  }
+
   return (
     <>
       {isDesktop ? (
@@ -26,7 +30,7 @@ export default function Navbar() {
           <div className="pl-10">asd</div>
           <div className="pr-10 flex flex-row justify-center items-center gap-5">
             <Button colorful={true} text={"VisionMarket"} />
-            <Button colorful={true} text={"VisionChat"} />
+            <Button colorful={true} text={"VisionChat"} onClick={goToVisonChat}/>
             <Button colorful={false} onClick={signOut} text={"Wyloguj"} optionalStyle="bg-white"/>
           </div>
         </nav>
@@ -50,7 +54,7 @@ export default function Navbar() {
             }`}
           >
             <Button colorful={true} text={"VisionMarket"} />
-            <Button colorful={true} text={"VisionChat"} />
+            <Button colorful={true} text={"VisionChat"} onClick={goToVisonChat}/>
             <Button colorful={false}  onClick={signOut} text={"Wyloguj"} optionalStyle="bg-white"/>
           </div>
         </nav>
