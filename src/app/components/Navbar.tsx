@@ -1,23 +1,24 @@
-"use client";
-import React, { useState } from "react";
-import Button from "./Button";
-import useMediaQuery from "@/hooks/useMediaQuery";
-import Image from "next/image";
-import Close from "../../assets/close.png";
-import Hamburger from "../../assets/hamburger.png";
-import { auth } from "../firebase"
+'use client';
+import React, { useState } from 'react';
+import Button from './Button';
+import useMediaQuery from '@/hooks/useMediaQuery';
+import Image from 'next/image';
+import Close from '../../assets/close.png';
+import Hamburger from '../../assets/hamburger.png';
+import { auth } from '../firebase';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function Navbar() {
   const isDesktop = useMediaQuery('(min-width: 1280px)');
   const [isOpen, setOpen] = useState(false);
-  const { push } = useRouter()
+  const { push } = useRouter();
 
   const signOut = () => {
-    localStorage.removeItem("authUser");
+    localStorage.removeItem('authUser');
     auth.signOut();
-    push("/");
-  }
+    push('/');
+  };
 
   return (
     <>
@@ -25,9 +26,16 @@ export default function Navbar() {
         <nav className=" h-20 z-100 w-full py-4 border-b-[1px] border-gray-300 shadow-sm flex flex-row justify-between items-center bg-white">
           <div className="pl-10">asd</div>
           <div className="pr-10 flex flex-row justify-center items-center gap-5">
-            <Button colorful={true} text={"VisionMarket"} />
-            <Button colorful={true} text={"VisionChat"} />
-            <Button colorful={false} onClick={signOut} text={"Wyloguj"} optionalStyle="bg-white"/>
+            <Button colorful={true} text={'VisionMarket'} />
+            <Link href={'/vision-chat'}>
+              <Button colorful={true} text={'VisionChat'} />
+            </Link>
+            <Button
+              colorful={false}
+              onClick={signOut}
+              text={'Wyloguj'}
+              optionalStyle="bg-white"
+            />
           </div>
         </nav>
       ) : (
@@ -49,9 +57,16 @@ export default function Navbar() {
                 : 'hidden'
             }`}
           >
-            <Button colorful={true} text={"VisionMarket"} />
-            <Button colorful={true} text={"VisionChat"} />
-            <Button colorful={false}  onClick={signOut} text={"Wyloguj"} optionalStyle="bg-white"/>
+            <Button colorful={true} text={'VisionMarket'} />
+            <Link href={'/vision-chat'}>
+              <Button colorful={true} text={'VisionChat'} />
+            </Link>
+            <Button
+              colorful={false}
+              onClick={signOut}
+              text={'Wyloguj'}
+              optionalStyle="bg-white"
+            />
           </div>
         </nav>
       )}
