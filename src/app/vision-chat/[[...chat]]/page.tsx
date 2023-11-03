@@ -9,6 +9,7 @@ import PinnedChat from '../../components/PinnedChat';
 import IconButton from '@/app/components/IconButton';
 import { useRouter } from 'next/navigation';
 
+
 // Icons
 import {
   BsFillPencilFill,
@@ -16,6 +17,8 @@ import {
   BsFillCameraVideoFill,
   BsArrowLeftShort
 } from 'react-icons/bs';
+import Image from 'next/image';
+import Close from '../../../assets/close.png';
 import { GrAttachment, GrEmoji } from 'react-icons/gr';
 import { AiFillPhone, AiOutlineCamera, AiOutlineSwapRight } from 'react-icons/ai';
 import { MdElectricalServices, MdSend } from 'react-icons/md';
@@ -29,6 +32,8 @@ import { collection, query, where, onSnapshot, setDoc, addDoc, orderBy } from 'f
 import { doc, updateDoc, getDoc, getDocs } from 'firebase/firestore';
 import { Timestamp } from 'firebase/firestore';
 import 'firebase/firestore';
+import ChatModal from '@/app/components/ChatModal';
+import { useState } from 'react';
 
 interface User {
   id: string;
@@ -65,9 +70,7 @@ const Page = () => {
     // get the user data from db
     const docRef = doc(db, "Users", "commonUsers", role, secondUserId);
     const docSnap = await getDoc(docRef);
-
-    console.log(docRef.path);
-    // if user exists
+    
     if (docSnap.exists()) 
     {
       console.log("user exists");
@@ -90,10 +93,6 @@ const Page = () => {
       }
 
       resetChatMessages(user?.uid, data.id);
-    }
-    else
-    {
-
     }
   };
 
@@ -121,11 +120,6 @@ const Page = () => {
       });
 
       setMessages(messages);
-    } 
-    else
-    {
-      console.log("doc does not exists");
-      //await setDoc(doc(db, "conversations", docName), {});
     }
   }
 
@@ -237,10 +231,7 @@ const Page = () => {
         await getUser("Students").then(() => {
           fetchUsers('Students', setStudentsData);
           fetchUsers('Teachers', setTeacherData);
-          fetchUsers('Parents', setParentsData);
-          // fetch the chat between userData and userData2          
-          // if document does not exist return empty chat
-          // if user sends message add to collection messages (if exist) - if not create document with userData.id and userData2.id          
+          fetchUsers('Parents', setParentsData);     
         });
 
         loadChat(auth.currentUser?.uid);      
@@ -253,10 +244,17 @@ const Page = () => {
 
   }, [push]);
 
+    const [newConversation, setNewConversation] = useState(false)
+
   return (
     <div className="w-full h-screen">
       <Navbar />
-
+      <div className={`${newConversation? "block":"hidden"}`}>
+      <div className="lg:w-8 lg:h-8 w-7 h-7 mb-14 lg:top-44 top-36 md:top-40 md:left-[45rem] lg:left-[88rem] left-[20rem] absolute z-30" onClick={() => setNewConversation(!newConversation)}>
+      <Image src={Close} alt="zamknij" />
+              </div>
+        <ChatModal />
+      </div>
       <div className="flex h-[calc(100vh-5rem)]">
         {/* Sidebar */}
         <div
@@ -282,7 +280,7 @@ const Page = () => {
             </div>
 
             {/* Edit profile */}
-            <div className="flex-2 -mt-4">
+            <div className="flex-2 -mt-4" onClick={() => setNewConversation(true)}>
               <IconButton>
                 <BsFillPencilFill className="text-custom-dark text-[1em] lg:text-[1.4em]" />
               </IconButton>
@@ -390,14 +388,18 @@ const Page = () => {
           </div>
 
           {/* Chatbox */}
-          <div className="bg-light-gray w-full flex-1 p-10">
+          <div className="bg-light-gray rounded-sm w-full flex-1 p-10">
             {messages?.map((el) => {
               return (                
                 (userData.id == el.sender) ? (
-                  <p className="my-[1vh] flex items-center justify-end text-l" key={el.id}>{el.content}</p>
+                  <div className='w-full flex items-center justify-end' key={el.id}>
+                    <p className="py-2 px-3 my-[1px] rounded-s-lg rounded-t-lg bg-blue text-white">{el.content}</p>
+                  </div>
                 ):
                 (
-                  <p className="my-[1vh] flex items-center justify-start text-l" key={el.id}>{el.content}</p>
+                  <div className='flex items-center justify-start'>
+                    <p className="my-[1px] py-2 px-3 rounded-e-lg rounded-t-lg bg-gray-300 text-black" key={el.id}>{el.content}</p>
+                  </div>
                 )
               )
             })}
