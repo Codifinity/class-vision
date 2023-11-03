@@ -14,7 +14,7 @@ const Page = () => {
           Sprawdziany i kartkówki
         </h1>
 
-        {/* Date action bar */}
+        {/* Date swiper */}
         <div className="w-full flex items-center justify-center my-10 gap-6">
           {/* Back arrow */}
           <button className="rounded-full bg-light-blue flex items-center justify-center hover:bg-blue p-1">
@@ -31,21 +31,80 @@ const Page = () => {
         </div>
 
         {/* days container */}
-        <div className="w-full flex flex-col">
+        <div className="scrollbar-thin scrollbar-thumb-custom-dark/40 scrollbar-track-gray-200 px-2 w-full flex flex-col overflow-y-auto gap-4">
           {/* single day container */}
-          <div>
+          <div className="flex flex-col items-start">
             {/* day name */}
-            <div>
-              <p>03.11</p>
+            <div className="bg-custom-dark/90 py-2 px-4 rounded-full">
+              <p className="text-white font-semibold">03.11</p>
             </div>
 
             {/* Sprawdziany */}
-            <TestCard
-              testSubject="Matematyka"
-              testName="Wielomiany"
-              testTeacher="John Doe"
-              testDescription="Podrecznik strona 238"
-            />
+            <div className="w-full">
+              <TestCard
+                testSubject="Matematyka"
+                testName="Wielomiany"
+                testTeacher="John Doe"
+                testDescription="Podrecznik strona 238"
+              />
+
+              <TestCard
+                testSubject="Matematyka"
+                testName="Wielomiany"
+                testTeacher="John Doe"
+                testDescription="Podrecznik strona 238"
+              />
+            </div>
+          </div>
+
+          {/* single day container */}
+          <div className="flex flex-col items-start">
+            {/* day name */}
+            <div className="bg-custom-dark/90 py-2 px-4 rounded-full">
+              <p className="text-white font-semibold">03.11</p>
+            </div>
+
+            {/* Sprawdziany */}
+            <div className="w-full">
+              <TestCard
+                testSubject="Matematyka"
+                testName="Wielomiany"
+                testTeacher="John Doe"
+                testDescription="Podrecznik strona 238"
+              />
+
+              <TestCard
+                testSubject="Matematyka"
+                testName="Wielomiany"
+                testTeacher="John Doe"
+                testDescription="Podrecznik strona 238"
+              />
+            </div>
+          </div>
+
+          {/* single day container */}
+          <div className="flex flex-col items-start">
+            {/* day name */}
+            <div className="bg-custom-dark/90 py-2 px-4 rounded-full">
+              <p className="text-white font-semibold">03.11</p>
+            </div>
+
+            {/* Sprawdziany */}
+            <div className="w-full">
+              <TestCard
+                testSubject="Matematyka"
+                testName="Wielomiany"
+                testTeacher="John Doe"
+                testDescription="Podrecznik strona 238"
+              />
+
+              <TestCard
+                testSubject="Matematyka"
+                testName="Wielomiany"
+                testTeacher="John Doe"
+                testDescription="Podrecznik strona 238"
+              />
+            </div>
           </div>
         </div>
       </div>

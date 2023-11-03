@@ -17,13 +17,15 @@ const TestCard = ({
 }: TestCardProps) => {
   const [color, setColor] = React.useState<string>('');
   return (
-    <div className="w-full flex flex-col bg-red-200">
-      <div className="bg-green-100">
-        <p>{testSubject}</p>
+    <div className="w-full flex flex-col my-2">
+      <div className="bg-green-600 py-2">
+        <p className="text-white font-bold text-center">
+          {testSubject.toUpperCase()}
+        </p>
       </div>
 
-      <div>
-        <p>{testName}</p>
+      <div className="w-full bg-light-gray p-2">
+        <p className="text-2xl text-custom-dark font-semibold">{testName}</p>
         <p>{testTeacher}</p>
       </div>
     </div>
