@@ -261,10 +261,10 @@ const Page = () => {
   const [newConversation, setNewConversation] = useState(false);
   const [searchResults, setSearchResults] = useState<any[]>([]);
 
-  const [query, setQuery] = useState('');
+  const [usersQuery, setUsersQuery] = useState('');
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setQuery(e.target.value);
+    setUsersQuery(e.target.value);
   };
 
   const onSearch = async (query: string) => {
@@ -287,7 +287,7 @@ const Page = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    onSearch(query);
+    onSearch(usersQuery);
   };
 
   return (
@@ -335,13 +335,13 @@ const Page = () => {
           {/* Search bar */}
           <div className="flex items-center bg-white shadow-md rounded-full py-2 lg:py-4 px-4 lg:px-6 gap-2">
             <div>
-              <BsSearch />
+              <BsSearch onClick={handleSubmit} />
             </div>
             <div className="bg-red-100 w-full">
               <form onSubmit={handleSubmit}>
                 <input
                   type="text"
-                  value={query}
+                  value={usersQuery}
                   onChange={handleChange}
                   placeholder="Wyszukaj nauczyciela"
                   className="w-full outline-none"
