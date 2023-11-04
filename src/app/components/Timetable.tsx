@@ -32,7 +32,7 @@ export default function Timetable() {
   const [isOpen, setOpen] = useState(true);
 
   return (
-    <section className="border-gray-300 border-[1px] lg:w-1/4 w-full mx-auto lg:ml-24 rounded-lg px-5 lg:mt-0 mt-4 py-8 shadow-md">
+    <section className="border-gray-300 border-[1px]  rounded-lg px-5 lg:mt-0 py-8 shadow-md">
       <div className="flex flex-row items-center justify-between">
         <h3 className="text-dark-blue font-bold text-2xl">Plan lekcji</h3>
         <div
