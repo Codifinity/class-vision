@@ -3,9 +3,16 @@
 import * as React from 'react';
 import Navbar from '../components/Navbar';
 import Dropdown from '../components/Dropdown';
+import { useRouter } from 'next/navigation';
+
+import { db, auth } from '../firebase';
+import { doc, collection, getDoc, getDocs, query, where, QuerySnapshot, Query } from 'firebase/firestore';
+import { setRequestMeta } from 'next/dist/server/request-meta';
+import { setDefaultAutoSelectFamilyAttemptTimeout } from 'net';
 
 interface GradesObjectProps {
-  subjectName: string;
+  id:string,
+  subject: string;
   type: string;
   grade: string;
 }
@@ -21,27 +28,83 @@ let subjects = [
   'Biologia',
   'Język niemiecki'
 ];
-let grades: GradesObjectProps[] = [
-  { subjectName: 'Matematyka', type: 'Sprawdzian', grade: '3' },
-  { subjectName: 'Język polski', type: 'Kartkówka', grade: '1' },
-  { subjectName: 'Historia', type: 'Inne', grade: '2' },
-  { subjectName: 'Geografia', type: 'Sprawdzian', grade: '5' },
-  { subjectName: 'Język angielski', type: 'Zadanie domowe', grade: '5' },
-  { subjectName: 'Język angielski', type: 'Inne', grade: '2' },
-  { subjectName: 'Chemia', type: 'Sprawdzian', grade: '5' },
-  { subjectName: 'Język niemiecki', type: 'Zadanie domowe', grade: '5' },
-  { subjectName: 'Język niemiecki', type: 'Zadanie domowe', grade: '5' },
-  { subjectName: 'Język niemiecki', type: 'Zadanie domowe', grade: '5' },
-  { subjectName: 'Język niemiecki', type: 'Zadanie domowe', grade: '5' },
-  { subjectName: 'Język niemiecki', type: 'Zadanie domowe', grade: '5' },
-  { subjectName: 'Język niemiecki', type: 'Zadanie domowe', grade: '5' },
-  { subjectName: 'Język niemiecki', type: 'Zadanie domowe', grade: '5' },
-  { subjectName: 'Biologia', type: 'Inne', grade: '2' },
-  { subjectName: 'Fizyka', type: 'Sprawdzian', grade: '5' },
-  { subjectName: 'Język niemiecki', type: 'Zadanie domowe', grade: '5' }
-];
 
 export default function Page() {
+  const { push }                  = useRouter();
+  const [allGrades, setAllGrades] = React.useState<[{id: string, subject: string, type: string, grade: string}]>([{id: '', subject: '', type: '', grade: '' }])
+  const [grades, setGrades]       = React.useState<[{id: string, subject: string, type: string, grade: string}]>([{id: '', subject: '', type: '', grade: '' }])  
+
+  const loadGrades = async(subjectName:string) => {
+    if(subjectName == "Wszystkie")
+    {
+      setGrades(allGrades);
+    }
+    else
+    {
+      let newGrades:[{id: string, subject: string, type: string, grade: string}] = [{id: "", subject: "", type: "", grade: ""}];
+      
+      let i = 0;
+      allGrades.forEach((el) => {
+        if(el.subject == subjectName)
+        newGrades[i] = el;
+      })
+
+      setGrades(newGrades);
+    }
+  }
+
+  React.useEffect(() => {
+    auth.onAuthStateChanged(async(user:any) => {
+      if(user)
+      {
+        // get the role of user
+        const q             = query(collection(db, "UserRole"), where("userID", "==", user?.uid))
+        const querySnapshot = await getDocs(q);
+        let role:string     = "";
+        querySnapshot.forEach((doc) => {
+          role = doc.data()['role'];
+        })
+
+        // get the user data
+        const docRef  = doc(db, "Users", "commonUsers", role, user?.uid);
+        const docSnap = await getDoc(docRef);
+        let data:any  = {"school" : ""}
+        if(docSnap.exists())
+        {
+          data['school'] = docSnap.data()['school'];
+        }
+
+        // get the grades of user
+        if(role == "Students")
+        {
+          const gradesQuery = query(collection(db, "Schools", data['school'], "Grades"));
+          const gradesSnap  = await getDocs(gradesQuery);
+          let grades:[{id: string, subject: string, type: string, grade: string}] = [{id: "", subject: "", type: "", grade: ""}];
+          let i = 0;
+
+          gradesSnap.forEach((el) => {
+            const data    = el.data();
+            let grade:any= {id: "", subject: "", type: "", grade:""};
+
+            grade.id       = el.id;
+            grade.subject  = data['subject'];
+            grade.type     = data['type'];
+            grade.grade    = data['mark'];
+            
+            grades[i] = grade;
+            i++;
+          })          
+          setGrades(grades);
+          setAllGrades(grades);
+        }
+      }
+      else
+      {
+        push("login");
+      }
+    })
+  }, [push]);
+
   return (
     <div className="w-full">
       <Navbar />
@@ -49,22 +112,22 @@ export default function Page() {
         <div className="w-full flex md:flex-row flex-col justify-between items-center">
           <h3 className="font-semibold text-4xl pt-7 px-8">Oceny</h3>
           <div className="md:mx-5 mx-0 md:pt-0 pt-3">
-            <Dropdown />
+            <Dropdown callback={loadGrades}/>
           </div>
         </div>
         <div className='px-4 pt-5 pb-10'>
-          <Grades names={subjects} />
+          <Grades names={subjects}  grades={grades}/>
         </div>
       </section>
     </div>
   );
 }
-
 interface GradesProps {
+  grades: GradesObjectProps[]
   names: string[];
 }
 
-const Grades = ({ names }: GradesProps) => {
+const Grades = ({ names, grades}: GradesProps) => {
   return (
     <>
       {names.map((name, nameId) => (
@@ -94,7 +157,7 @@ const GradesItems = ({ grades, subject }: GradesItemsProps) => {
     <>
       {grades.map((grade, gradeId) => (
         <div key={gradeId}>
-          {subject === grade.subjectName ? (
+          {subject === grade.subject ? (
             <div
               className={`flex justify-center items-center mx-1 ${
                 grade.type === 'Sprawdzian'

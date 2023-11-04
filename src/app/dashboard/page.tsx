@@ -9,7 +9,6 @@ import WelcomeSection from '../components/WelcomeSection';
 import Timetable from '../components/Timetable';
 import LastGrades from '../components/LastGrades';
 import ExamsSchedule from '../components/ExamsSchedule';
-
 import { FallingLines } from 'react-loader-spinner';
 
 import { db, auth } from '../firebase';
@@ -65,7 +64,7 @@ export default function Page() {
         // get the grades of user
         if (role == 'Students') {
           const gradesQuery = query(
-            collection(db, 'Schools', data['school'], 'Grades')
+            collection(db, 'Schools', data['school'], 'Grades'), where("student", "==", user?.uid));
           );
           const gradesSnap = await getDocs(gradesQuery);
           let grades: [
@@ -84,6 +83,7 @@ export default function Page() {
 
             grades[i] = grade;
             i++;
+          })          
           });
 
           //console.log("size: " + grades.length)
@@ -94,9 +94,6 @@ export default function Page() {
           if (grades[0].id != '') {
             //setGrades([{id: "", subject: "Matematyka", type: "Sprawdzian", mark: "3" }])
             setGrades(grades);
-          }
-          //setGrades([{id: "", subject: 'Matematyka', type: 'Sprawdzian', mark: '3' }])
-          //setGrades(grades);
         }
       }
     };

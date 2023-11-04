@@ -38,11 +38,14 @@ import {
   onSnapshot,
   setDoc,
   addDoc,
-  orderBy
+  orderBy,
+  limit, 
 } from 'firebase/firestore';
+import { getAuth } from "firebase/auth";
 import { doc, updateDoc, getDoc, getDocs } from 'firebase/firestore';
 import { Timestamp } from 'firebase/firestore';
-import 'firebase/firestore';
+
+
 import ChatModal from '@/app/components/ChatModal';
 import { useState } from 'react';
 
@@ -195,61 +198,86 @@ const Page = () => {
     }
   }
 
-  const fetchUsers = async (
-    role: string,
-    setUser: React.Dispatch<React.SetStateAction<User[]>>
-  ) => {
-    const usersCollection = collection(db, 'Users', 'commonUsers', role);
+  const returnLastMessage = async(firstUserId:any, secondUserId:any) => {
+    const q = query(collection(db, "conversations", firstUserId + "_" + secondUserId, "messages"), orderBy("timestamp", "desc"), limit(1));
+    const docsSnap = await getDocs(q);
 
-    try {
-      const snapshot = await getDocs(usersCollection);
+    let result:string = "";
 
-      if (!snapshot.empty) {
-        const userList: User[] = snapshot.docs.map(doc => {
-          const data = doc.data();
-          const grades = data.grades || [];
+    docsSnap.forEach((el) => {
+      const data = el.data();
+      if(data['sender'] == firstUserId)
+        result += "Ty: ";      
 
-          return {
-            id: doc.id,
-            class: data.class || '',
-            email: data.email || '',
-            grades,
-            hasPasswordChanged: data.hasPasswordChanged || false,
-            name: data.name || '',
-            surname: data.surname || '',
-            parent: data.parent || '',
-            school: data.school || ''
-          };
-        });
+      result += data['content'];
+    })
 
-        setUser(userList);
-      } else {
-        console.log(`No documents found for ${role}`);
-      }
-    } catch (error) {
-      console.error(`Error fetching ${role} users:`, error);
-    }
-  };
+    return result;
+  }
 
   React.useEffect(() => {
-    const checkIfUserIsLoggedAndGetUsers = async () => {
-      const user = auth.currentUser;
-      if (!user) {
-        push('/login');
-      } else {
+    const fetchUsers = async (
+      role: string,
+      setUser: React.Dispatch<React.SetStateAction<User[]>>
+    ) => {
+      const usersCollection = collection(db, 'Users', 'commonUsers', role);
+  
+      try {
+        const snapshot = await getDocs(usersCollection);
+  
+        if (!snapshot.empty) {
+          const userList: User[] = snapshot.docs.map(doc => {
+            const data = doc.data();
+            const grades = data.grades || [];
+            const user = auth.currentUser;
+            const seconduserId = doc.id;        
+            
+            return {
+              id: doc.id,
+              class: data.class || '',
+              email: data.email || '',
+              grades,
+              hasPasswordChanged: data.hasPasswordChanged || false,
+              name: data.name || '',
+              surname: data.surname || '',
+              parent: data.parent || '',
+              school: data.school || '',
+              // make request to the firestore to get last message
+              lastMessage: returnLastMessage(user?.uid, seconduserId)
+            };
+          });
+  
+          setUser(userList);
+        } 
+        else 
+        {
+          console.log(`No documents found for ${role}`);
+        }
+      } 
+      catch (error)
+      {
+        console.error(`Error fetching ${role} users:`, error);
+      }
+    };
+
+    const onChanged = async(user: any) => {
+      if(user)
+      {      
         await getUser('Students').then(() => {
           fetchUsers('Students', setStudentsData);
           fetchUsers('Teachers', setTeacherData);
           fetchUsers('Parents', setParentsData);
         });
-
+  
         loadChat(auth.currentUser?.uid);
       }
-    };
+      else
+      {
+        push("/login");
+      }
+    }
 
-    setTimeout(() => {
-      checkIfUserIsLoggedAndGetUsers();
-    }, 500);
+    auth.onAuthStateChanged(onChanged);
   }, [push]);
 
   const [newConversation, setNewConversation] = useState(false);
@@ -327,7 +355,7 @@ const Page = () => {
                   src="/preview-pic.jpg"
                   name={student.name}
                   surname={student.surname}
-                  lastMessage="Cześć John Doe, jutro kontrola, nie przynos niczego"
+                  lastMessage={student.lastMessage}
                   lastMessageTime="16:34"
                 />
               );
@@ -341,7 +369,7 @@ const Page = () => {
                   src="/preview-pic.jpg"
                   name={parent.name}
                   surname={parent.name}
-                  lastMessage="Cześć John Doe, wyrzuć śmieci"
+                  lastMessage={parent.lastMessage}
                   lastMessageTime="16:34"
                 />
               );
@@ -355,7 +383,7 @@ const Page = () => {
                   src="/preview-pic.jpg"
                   name={teacher.name}
                   surname={teacher.surname}
-                  lastMessage="Cześć John Doe, prześlij mi swój projekt zegar w react"
+                  lastMessage={teacher.lastMessage}
                   lastMessageTime="16:34"
                 />
               );

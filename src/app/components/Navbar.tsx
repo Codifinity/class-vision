@@ -16,7 +16,6 @@ export default function Navbar() {
   const { push } = useRouter();
 
   const signOut = () => {
-    localStorage.removeItem('authUser');
     auth.signOut();
     push('/');
   };

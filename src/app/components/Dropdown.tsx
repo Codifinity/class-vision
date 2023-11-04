@@ -12,13 +12,17 @@ const subjects = [
   { name: 'Matematyka' }
 ];
 
-export default function Dropdown() {
+interface DropDownProps {
+  callback:any;
+}
+
+export default function Dropdown({callback} : DropDownProps) {
   const [selected, setSelected] = useState(subjects[0]);
   const [open, setOpen] = useState(true);
 
   return (
     <div className=" w-72">
-      <Listbox value={selected} onChange={setSelected}>
+      <Listbox value={selected} onChange={(e) => {setSelected({"name" : e.name}); callback(e.name)}}>
         <div className="relative mt-1">
           <Listbox.Button onClick={() => setOpen(!open)} className="relative w-full cursor-default rounded-lg bg-white border-[1px] border-black py-2 pl-3 pr-10 text-left shadow-md focus:outline-none focus-visible:border-indigo-500 focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-orange-300 sm:text-sm">
             <span className="block truncate">{selected.name}</span>
