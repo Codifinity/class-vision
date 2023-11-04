@@ -10,6 +10,8 @@ import Timetable from '../components/Timetable';
 import LastGrades from '../components/LastGrades';
 import ExamsSchedule from '../components/ExamsSchedule';
 
+import { FallingLines } from 'react-loader-spinner';
+
 import { db, auth } from '../firebase';
 import {
   doc,
@@ -21,6 +23,7 @@ import {
 } from 'firebase/firestore';
 
 export default function Page() {
+  const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [userData, setUserData] = React.useState<any>({ name: '...' });
   const [grades, setGrades] = React.useState<
     [{ id: string; subject: string; type: string; mark: string }]
@@ -30,7 +33,11 @@ export default function Page() {
   React.useEffect(() => {
     const checkUserandGetUserData = async () => {
       const user = auth.currentUser;
-      if (!user) push('/login');
+      if (!user) {
+        push('/login');
+      } else {
+        setIsLoading(false);
+      }
 
       if (user?.uid !== undefined) {
         // get the role of user
@@ -96,6 +103,19 @@ export default function Page() {
 
     setTimeout(async () => checkUserandGetUserData(), 200);
   }, [push]);
+
+  if (isLoading === true) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <FallingLines
+          color="#00A7EE"
+          width="100"
+          visible={true}
+          aria-label="falling-lines-loading"
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">
