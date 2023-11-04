@@ -265,6 +265,7 @@ const Page = () => {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setUsersQuery(e.target.value);
+    onSearch(usersQuery);
   };
 
   const onSearch = async (query: string) => {
@@ -284,11 +285,6 @@ const Page = () => {
       console.error('Error fetching teachers:', error);
     }
   };    
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    onSearch(usersQuery);
-  };
 
   return (
     <div className="w-full h-screen">
@@ -335,10 +331,10 @@ const Page = () => {
           {/* Search bar */}
           <div className="flex items-center bg-white shadow-md rounded-full py-2 lg:py-4 px-4 lg:px-6 gap-2">
             <div>
-              <BsSearch onClick={handleSubmit} />
+              <BsSearch/>
             </div>
             <div className="bg-red-100 w-full">
-              <form onSubmit={handleSubmit}>
+              <form>
                 <input
                   type="text"
                   value={usersQuery}
@@ -349,7 +345,7 @@ const Page = () => {
               </form>
               <ul>
                 {searchResults.map((user) => (
-                  <li key={user.id}>{user.name}</li>
+                  <li key={user.id}>{user.name} {user.surname}</li>
                 ))}
               </ul>
             </div>
