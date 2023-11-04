@@ -38,11 +38,14 @@ import {
   onSnapshot,
   setDoc,
   addDoc,
-  orderBy
+  orderBy,
+  limit, 
 } from 'firebase/firestore';
+import { getAuth } from "firebase/auth";
 import { doc, updateDoc, getDoc, getDocs } from 'firebase/firestore';
 import { Timestamp } from 'firebase/firestore';
-import 'firebase/firestore';
+
+
 import ChatModal from '@/app/components/ChatModal';
 import { useState } from 'react';
 
@@ -195,6 +198,23 @@ const Page = () => {
     }
   }
 
+  const returnLastMessage = async(firstUserId:any, secondUserId:any) => {
+    const q = query(collection(db, "conversations", firstUserId + "_" + secondUserId, "messages"), orderBy("timestamp", "desc"), limit(1));
+    const docsSnap = await getDocs(q);
+
+    let result:string = "";
+
+    docsSnap.forEach((el) => {
+      const data = el.data();
+      if(data['sender'] == firstUserId)
+        result += "Ty: ";      
+
+      result += data['content'];
+    })
+
+    return result;
+  }
+
   const fetchUsers = async (
     role: string,
     setUser: React.Dispatch<React.SetStateAction<User[]>>
@@ -208,7 +228,9 @@ const Page = () => {
         const userList: User[] = snapshot.docs.map(doc => {
           const data = doc.data();
           const grades = data.grades || [];
-
+          const user = auth.currentUser;
+          const seconduserId = doc.id;        
+          
           return {
             id: doc.id,
             class: data.class || '',
@@ -218,38 +240,45 @@ const Page = () => {
             name: data.name || '',
             surname: data.surname || '',
             parent: data.parent || '',
-            school: data.school || ''
+            school: data.school || '',
+            // make request to the firestore to get last message
+            lastMessage: returnLastMessage(user?.uid, seconduserId)
           };
         });
 
         setUser(userList);
-      } else {
+      } 
+      else 
+      {
         console.log(`No documents found for ${role}`);
       }
-    } catch (error) {
+    } 
+    catch (error)
+    {
       console.error(`Error fetching ${role} users:`, error);
     }
   };
 
-  React.useEffect(() => {
-    const checkIfUserIsLoggedAndGetUsers = async () => {
-      const user = auth.currentUser;
-      if (!user) {
-        push('/login');
-      } else {
-        await getUser('Students').then(() => {
-          fetchUsers('Students', setStudentsData);
-          fetchUsers('Teachers', setTeacherData);
-          fetchUsers('Parents', setParentsData);
-        });
 
-        loadChat(auth.currentUser?.uid);
-      }
-    };
+  const onChanged = async(user: any) => {
+    if(user)
+    {      
+      await getUser('Students').then(() => {
+        fetchUsers('Students', setStudentsData);
+        fetchUsers('Teachers', setTeacherData);
+        fetchUsers('Parents', setParentsData);
+      });
 
-    setTimeout(() => {
-      checkIfUserIsLoggedAndGetUsers();
-    }, 500);
+      loadChat(auth.currentUser?.uid);
+    }
+    else
+    {
+      push("/login");
+    }
+  }
+
+  React.useEffect(() => {    
+    auth.onAuthStateChanged(onChanged);
   }, [push]);
 
   const [newConversation, setNewConversation] = useState(false);
@@ -327,7 +356,7 @@ const Page = () => {
                   src="/preview-pic.jpg"
                   name={student.name}
                   surname={student.surname}
-                  lastMessage="Cześć John Doe, jutro kontrola, nie przynos niczego"
+                  lastMessage={student.lastMessage}
                   lastMessageTime="16:34"
                 />
               );
@@ -341,7 +370,7 @@ const Page = () => {
                   src="/preview-pic.jpg"
                   name={parent.name}
                   surname={parent.name}
-                  lastMessage="Cześć John Doe, wyrzuć śmieci"
+                  lastMessage={parent.lastMessage}
                   lastMessageTime="16:34"
                 />
               );
@@ -355,7 +384,7 @@ const Page = () => {
                   src="/preview-pic.jpg"
                   name={teacher.name}
                   surname={teacher.surname}
-                  lastMessage="Cześć John Doe, prześlij mi swój projekt zegar w react"
+                  lastMessage={teacher.lastMessage}
                   lastMessageTime="16:34"
                 />
               );

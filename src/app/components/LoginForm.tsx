@@ -16,9 +16,12 @@ export default function LoginForm() {
   const { push } = useRouter();
 
   useEffect(() => {
-    if (localStorage.getItem('authUser')) {
-      push('/dashboard');
-    }
+    auth.onAuthStateChanged((authUser:any) => {
+      if (authUser) {        
+        push('/dashboard');
+      } else {        
+      }
+    });
   }, [push]);
 
   const logInForm = (e: any) => {
@@ -33,15 +36,6 @@ export default function LoginForm() {
         console.log(error.code);
         console.log(error.message);
       });
-
-    auth.onAuthStateChanged(authUser => {
-      if (authUser) {
-        localStorage.setItem('authUser', JSON.stringify(authUser));
-        push('/dashboard');
-      } else {
-        localStorage.removeItem('authUser');
-      }
-    });
   };
 
   return (

@@ -3,6 +3,10 @@
 import * as React from 'react';
 import Navbar from '../components/Navbar';
 import Dropdown from '../components/Dropdown';
+import { useRouter } from 'next/navigation';
+
+import { db, auth } from '../firebase';
+import { doc, collection, getDoc, getDocs, query, where } from 'firebase/firestore';
 
 interface GradesObjectProps {
   subjectName: string;
@@ -42,6 +46,36 @@ let grades: GradesObjectProps[] = [
 ];
 
 export default function Page() {
+  const { push } = useRouter();
+
+  React.useEffect(() => {
+    const checkUserAndGetUserGrades = async() => {
+      const user = auth.currentUser;
+
+      if(!user)
+        push("/login")
+
+      if(user?.uid !== undefined)
+      {
+        // get the role of user
+        const q             = query(collection(db, "UserRole"), where("userID", "==", user?.uid))
+        const querySnapshot = await getDocs(q);
+        let role:string     = "";
+        querySnapshot.forEach((doc) => {
+          role = doc.data()['role'];
+        })
+        
+        // get the user data
+        const docRef  = doc(db, "Users", "commonUsers", role, user?.uid);
+        const docSnap = await getDoc(docRef);
+        let data:any  = {"school" : ""}
+        if(docSnap.exists())
+          data    = docSnap.data();
+        
+      }
+    }
+  });
+
   return (
     <div className="w-full">
       <Navbar />

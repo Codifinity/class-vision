@@ -18,13 +18,9 @@ export default function Page() {
   const [grades, setGrades]     = React.useState<[{id: string, subject: string, type: string, mark: string}]>([{id: '', subject: '', type: '', mark: '' }])
   const { push } = useRouter()
   
-  React.useEffect(() => {
-    const checkUserandGetUserData = async() => {
-      const user = auth.currentUser;
-      if(!user)
-        push("/login");
-
-      if(user?.uid !== undefined)
+  React.useEffect(() => {      
+    auth.onAuthStateChanged(async(user:any) => {
+      if(user)
       {
         // get the role of user
         const q             = query(collection(db, "UserRole"), where("userID", "==", user?.uid))
@@ -65,25 +61,17 @@ export default function Page() {
             
             grades[i] = grade;
             i++;
-          })
-
-          //console.log("size: " + grades.length)
-
-          //grades = [{id: "qDuWELWh1arzAzYq6kio", subject: "Matematyka", type: "Sprawdzian", mark: "4" }]
-          //console.log(grades);
+          })          
 
           if(grades[0].id != "")
-          {
-            //setGrades([{id: "", subject: "Matematyka", type: "Sprawdzian", mark: "3" }])
             setGrades(grades);
-          }
-          //setGrades([{id: "", subject: 'Matematyka', type: 'Sprawdzian', mark: '3' }])
-          //setGrades(grades);
         }
       }
-    }
-
-    setTimeout(async() => checkUserandGetUserData(), 200)
+      else
+      {
+        push("login");
+      }
+    })
   }, [push])
 
   return (
@@ -99,8 +87,6 @@ export default function Page() {
               <LastGrades grades={grades}/>
               <ExamsSchedule />
             </div>
-
-
 
           </div>
           <Timetable />
