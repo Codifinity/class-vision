@@ -6,7 +6,9 @@ import Dropdown from '../components/Dropdown';
 import { useRouter } from 'next/navigation';
 
 import { db, auth } from '../firebase';
-import { doc, collection, getDoc, getDocs, query, where } from 'firebase/firestore';
+import { doc, collection, getDoc, getDocs, query, where, QuerySnapshot, Query } from 'firebase/firestore';
+import { setRequestMeta } from 'next/dist/server/request-meta';
+import { setDefaultAutoSelectFamilyAttemptTimeout } from 'net';
 
 interface GradesObjectProps {
   id:string,
@@ -26,30 +28,30 @@ let subjects = [
   'Biologia',
   'Język niemiecki'
 ];
-/*
-let grades: GradesObjectProps[] = [
-  { id:'', subject: 'Matematyka', type: 'Sprawdzian', grade: '3' },
-  { id:'', subject: 'Język polski', type: 'Kartkówka', grade: '1' },
-  { id:'', subject: 'Historia', type: 'Inne', grade: '2' },
-  { id:'', subject: 'Geografia', type: 'Sprawdzian', grade: '5' },
-  { id:'', subject: 'Język angielski', type: 'Zadanie domowe', grade: '5' },
-  { id:'', subject: 'Język angielski', type: 'Inne', grade: '2' },
-  { id:'', subject: 'Chemia', type: 'Sprawdzian', grade: '5' },
-  { id:'', subject: 'Język niemiecki', type: 'Zadanie domowe', grade: '5' },
-  { id:'', subject: 'Język niemiecki', type: 'Zadanie domowe', grade: '5' },
-  { id:'', subject: 'Język niemiecki', type: 'Zadanie domowe', grade: '5' },
-  { id:'', subject: 'Język niemiecki', type: 'Zadanie domowe', grade: '5' },
-  { id:'', subject: 'Język niemiecki', type: 'Zadanie domowe', grade: '5' },
-  { id:'', subject: 'Język niemiecki', type: 'Zadanie domowe', grade: '5' },
-  { id:'', subject: 'Język niemiecki', type: 'Zadanie domowe', grade: '5' },
-  { id:'', subject: 'Biologia', type: 'Inne', grade: '2' },
-  { id:'', subject: 'Fizyka', type: 'Sprawdzian', grade: '5' },
-  { id:'', subject: 'Język niemiecki', type: 'Zadanie domowe', grade: '5' }
-];*/
 
 export default function Page() {
-  const { push } = useRouter();
-  const [grades, setGrades]     = React.useState<[{id: string, subject: string, type: string, grade: string}]>([{id: '', subject: '', type: '', grade: '' }])
+  const { push }                  = useRouter();
+  const [allGrades, setAllGrades] = React.useState<[{id: string, subject: string, type: string, grade: string}]>([{id: '', subject: '', type: '', grade: '' }])
+  const [grades, setGrades]       = React.useState<[{id: string, subject: string, type: string, grade: string}]>([{id: '', subject: '', type: '', grade: '' }])  
+
+  const loadGrades = async(subjectName:string) => {
+    if(subjectName == "Wszystkie")
+    {
+      setGrades(allGrades);
+    }
+    else
+    {
+      let newGrades:[{id: string, subject: string, type: string, grade: string}] = [{id: "", subject: "", type: "", grade: ""}];
+      
+      let i = 0;
+      allGrades.forEach((el) => {
+        if(el.subject == subjectName)
+        newGrades[i] = el;
+      })
+
+      setGrades(newGrades);
+    }
+  }
 
   React.useEffect(() => {
     auth.onAuthStateChanged(async(user:any) => {
@@ -93,6 +95,7 @@ export default function Page() {
             i++;
           })          
           setGrades(grades);
+          setAllGrades(grades);
         }
       }
       else
@@ -100,7 +103,7 @@ export default function Page() {
         push("login");
       }
     })
-  });
+  }, [push]);
 
   return (
     <div className="w-full">
@@ -109,7 +112,7 @@ export default function Page() {
         <div className="w-full flex md:flex-row flex-col justify-between items-center">
           <h3 className="font-semibold text-4xl pt-7 px-8">Oceny</h3>
           <div className="md:mx-5 mx-0 md:pt-0 pt-3">
-            <Dropdown />
+            <Dropdown callback={loadGrades}/>
           </div>
         </div>
         <div className='px-4 pt-5 pb-10'>
@@ -119,7 +122,6 @@ export default function Page() {
     </div>
   );
 }
-
 interface GradesProps {
   grades: GradesObjectProps[]
   names: string[];
