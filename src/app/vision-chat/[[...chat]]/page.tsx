@@ -273,7 +273,7 @@ const Page = () => {
       const teachers: User[] = await fetchUsers('Teachers', setSearchResults);
   
       const teachersQueried = teachers.filter((teacher) =>
-        teacher.name.toLowerCase().includes(query.toLowerCase())
+        teacher.name.toLowerCase().includes(query.toLowerCase()) || teacher.surname.toLowerCase().includes(query.toLowerCase())
       );
   
       const finalTeachersQuery = teachersQueried.filter((teacher) =>
