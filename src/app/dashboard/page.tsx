@@ -90,22 +90,23 @@ export default function Page() {
     <div className="w-full">
       <Navbar />
       <RegisterModal />
-      <div className="w-10/12 mx-auto">
-        <div className="flex lg:flex-row flex-col justify-between items-start my-6">
-          <div className="w-full lg:w-2/3">
-            <WelcomeSection userName={userData['name']}/>
-
-            <div className="flex lg:flex-row flex-col lg:justify-between items-start justify-center 2xl:w-[70rem] w-full mt-4 lg:gap-10 2xl:gap-5 gap-5">
-              <LastGrades grades={grades}/>
+      <div className="w-10/12 flex mx-auto bg-red-500">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div className="lg:col-span-2">
+            <WelcomeSection userName={userData['name']} />
+            <div className="grid lg:grid-cols-2 grid-cols-1 gap-4">
+              <LastGrades grades={grades} />
               <ExamsSchedule />
             </div>
-
-
-
+          </div>
           </div>
           <Timetable />
-        </div>
+          </div>
       </div>
-    </div>
   );
 }
+
+
+
+
+

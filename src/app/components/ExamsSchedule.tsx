@@ -31,7 +31,7 @@ let exams: examsProps[] = [
 
 export default function ExamsSchedule() {
   return (
-    <section className="lg:w-5/6 xl:w-1/2 w-full shadow-md border-gray-300 border-[1px] rounded-lg min-h-[30rem]">
+    <section className=" shadow-md border-gray-300 border-[1px] rounded-lg min-h-[30rem]">
       <h3 className="text-dark-blue font-bold text-2xl my-5 mx-7">
         Sprawdziany, kartkówki
       </h3>
