@@ -4,9 +4,7 @@ interface WelcomeSectionProps {
   userName: string;
 }
 
-export default function WelcomeSection({
-  userName,
-}: WelcomeSectionProps) {
+export default function WelcomeSection({ userName }: WelcomeSectionProps) {
   return (
     <section className=" border-[1px] p-3 py-7 lg:px-16 px-8 border-gray-300 font-medium shadow-md md:w-full w-full rounded-lg">
       <h1 className="font-bold lg:text-6xl my-3 text-2xl md:text-4xl">

@@ -1,4 +1,3 @@
-'use client';
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Arrow from '../../assets/down-arrow.png';
@@ -29,40 +28,27 @@ let tomorrow: lessonObject[] = [
 ];
 
 export default function Timetable() {
-  const [isOpen, setOpen] = useState(true);
-
   return (
-    <section className="border-gray-300 border-[1px]  rounded-lg px-5 lg:mt-0 py-8 shadow-md">
+    <section className="border-gray-300 border-[1px]  rounded-lg px-5 lg:mt-0 py-8 shadow-md  w-full">
       <div className="flex flex-row items-center justify-between">
         <h3 className="text-dark-blue font-bold text-2xl">Plan lekcji</h3>
-        <div
-          className={`w-10 ${isOpen ? 'rotate-180 z-0' : ''}`}
-          onClick={() => setOpen(!isOpen)}
-        >
-          <Image src={Arrow} alt="" />
+      </div>
+
+      <div className="mt-5">
+        <p className="text-lg font-semibold">Dzisiaj: </p>
+        <div className="flex flex-col justify-center items-start mt-2">
+          <TimetableItem lessons={today} />
         </div>
       </div>
-      {isOpen ? (
-        <>
-          <div className="mt-5">
-            <p className="text-lg font-semibold">Dzisiaj: </p>
-            <div className="flex flex-col justify-center items-start mt-2">
-              <TimetableItem lessons={today} />
-            </div>
-          </div>
-          <div className="mt-5">
-            <p className="text-lg font-semibold">Jutro: </p>
-            <div className="flex flex-col justify-center items-start mt-2">
-              <TimetableItem lessons={tomorrow} />
-            </div>
-          </div>
-          <div className="w-full lg:mt-8 lg:mb-3 font-semibold text-xl text-[#00BBE4] lg:mx-5 mx-5 mt-8 mb-5">
-          <Link href="/lessons">Zobacz pełny plan lekcji</Link>
-          </div>
-        </>
-      ) : (
-        <></>
-      )}
+      <div className="mt-5">
+        <p className="text-lg font-semibold">Jutro: </p>
+        <div className="flex flex-col justify-center items-start mt-2">
+          <TimetableItem lessons={tomorrow} />
+        </div>
+      </div>
+      <div className="w-full lg:mt-8 lg:mb-3 font-semibold text-xl text-[#00BBE4] lg:mx-5 mx-5 mt-8 mb-5">
+        <Link href="/lessons">Zobacz pełny plan lekcji</Link>
+      </div>
     </section>
   );
 }
