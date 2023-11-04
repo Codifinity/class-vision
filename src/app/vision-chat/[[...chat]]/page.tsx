@@ -215,69 +215,68 @@ const Page = () => {
     return result;
   }
 
-  const fetchUsers = async (
-    role: string,
-    setUser: React.Dispatch<React.SetStateAction<User[]>>
-  ) => {
-    const usersCollection = collection(db, 'Users', 'commonUsers', role);
-
-    try {
-      const snapshot = await getDocs(usersCollection);
-
-      if (!snapshot.empty) {
-        const userList: User[] = snapshot.docs.map(doc => {
-          const data = doc.data();
-          const grades = data.grades || [];
-          const user = auth.currentUser;
-          const seconduserId = doc.id;        
-          
-          return {
-            id: doc.id,
-            class: data.class || '',
-            email: data.email || '',
-            grades,
-            hasPasswordChanged: data.hasPasswordChanged || false,
-            name: data.name || '',
-            surname: data.surname || '',
-            parent: data.parent || '',
-            school: data.school || '',
-            // make request to the firestore to get last message
-            lastMessage: returnLastMessage(user?.uid, seconduserId)
-          };
-        });
-
-        setUser(userList);
+  React.useEffect(() => {
+    const fetchUsers = async (
+      role: string,
+      setUser: React.Dispatch<React.SetStateAction<User[]>>
+    ) => {
+      const usersCollection = collection(db, 'Users', 'commonUsers', role);
+  
+      try {
+        const snapshot = await getDocs(usersCollection);
+  
+        if (!snapshot.empty) {
+          const userList: User[] = snapshot.docs.map(doc => {
+            const data = doc.data();
+            const grades = data.grades || [];
+            const user = auth.currentUser;
+            const seconduserId = doc.id;        
+            
+            return {
+              id: doc.id,
+              class: data.class || '',
+              email: data.email || '',
+              grades,
+              hasPasswordChanged: data.hasPasswordChanged || false,
+              name: data.name || '',
+              surname: data.surname || '',
+              parent: data.parent || '',
+              school: data.school || '',
+              // make request to the firestore to get last message
+              lastMessage: returnLastMessage(user?.uid, seconduserId)
+            };
+          });
+  
+          setUser(userList);
+        } 
+        else 
+        {
+          console.log(`No documents found for ${role}`);
+        }
       } 
-      else 
+      catch (error)
       {
-        console.log(`No documents found for ${role}`);
+        console.error(`Error fetching ${role} users:`, error);
       }
-    } 
-    catch (error)
-    {
-      console.error(`Error fetching ${role} users:`, error);
+    };
+
+    const onChanged = async(user: any) => {
+      if(user)
+      {      
+        await getUser('Students').then(() => {
+          fetchUsers('Students', setStudentsData);
+          fetchUsers('Teachers', setTeacherData);
+          fetchUsers('Parents', setParentsData);
+        });
+  
+        loadChat(auth.currentUser?.uid);
+      }
+      else
+      {
+        push("/login");
+      }
     }
-  };
 
-
-  const onChanged = async(user: any) => {
-    if(user)
-    {      
-      await getUser('Students').then(() => {
-        fetchUsers('Students', setStudentsData);
-        fetchUsers('Teachers', setTeacherData);
-        fetchUsers('Parents', setParentsData);
-      });
-
-      loadChat(auth.currentUser?.uid);
-    }
-    else
-    {
-      push("/login");
-    }
-  }
-
-  React.useEffect(() => {    
     auth.onAuthStateChanged(onChanged);
   }, [push]);
 

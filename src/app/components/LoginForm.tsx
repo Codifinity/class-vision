@@ -14,7 +14,7 @@ export default function LoginForm() {
   const [password, setPassword] = useState('');
 
   const { push } = useRouter();
-
+  
   useEffect(() => {
     auth.onAuthStateChanged((authUser:any) => {
       if (authUser) {        

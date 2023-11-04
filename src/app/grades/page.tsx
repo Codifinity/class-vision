@@ -9,7 +9,8 @@ import { db, auth } from '../firebase';
 import { doc, collection, getDoc, getDocs, query, where } from 'firebase/firestore';
 
 interface GradesObjectProps {
-  subjectName: string;
+  id:string,
+  subject: string;
   type: string;
   grade: string;
 }
@@ -25,37 +26,34 @@ let subjects = [
   'Biologia',
   'Język niemiecki'
 ];
+/*
 let grades: GradesObjectProps[] = [
-  { subjectName: 'Matematyka', type: 'Sprawdzian', grade: '3' },
-  { subjectName: 'Język polski', type: 'Kartkówka', grade: '1' },
-  { subjectName: 'Historia', type: 'Inne', grade: '2' },
-  { subjectName: 'Geografia', type: 'Sprawdzian', grade: '5' },
-  { subjectName: 'Język angielski', type: 'Zadanie domowe', grade: '5' },
-  { subjectName: 'Język angielski', type: 'Inne', grade: '2' },
-  { subjectName: 'Chemia', type: 'Sprawdzian', grade: '5' },
-  { subjectName: 'Język niemiecki', type: 'Zadanie domowe', grade: '5' },
-  { subjectName: 'Język niemiecki', type: 'Zadanie domowe', grade: '5' },
-  { subjectName: 'Język niemiecki', type: 'Zadanie domowe', grade: '5' },
-  { subjectName: 'Język niemiecki', type: 'Zadanie domowe', grade: '5' },
-  { subjectName: 'Język niemiecki', type: 'Zadanie domowe', grade: '5' },
-  { subjectName: 'Język niemiecki', type: 'Zadanie domowe', grade: '5' },
-  { subjectName: 'Język niemiecki', type: 'Zadanie domowe', grade: '5' },
-  { subjectName: 'Biologia', type: 'Inne', grade: '2' },
-  { subjectName: 'Fizyka', type: 'Sprawdzian', grade: '5' },
-  { subjectName: 'Język niemiecki', type: 'Zadanie domowe', grade: '5' }
-];
+  { id:'', subject: 'Matematyka', type: 'Sprawdzian', grade: '3' },
+  { id:'', subject: 'Język polski', type: 'Kartkówka', grade: '1' },
+  { id:'', subject: 'Historia', type: 'Inne', grade: '2' },
+  { id:'', subject: 'Geografia', type: 'Sprawdzian', grade: '5' },
+  { id:'', subject: 'Język angielski', type: 'Zadanie domowe', grade: '5' },
+  { id:'', subject: 'Język angielski', type: 'Inne', grade: '2' },
+  { id:'', subject: 'Chemia', type: 'Sprawdzian', grade: '5' },
+  { id:'', subject: 'Język niemiecki', type: 'Zadanie domowe', grade: '5' },
+  { id:'', subject: 'Język niemiecki', type: 'Zadanie domowe', grade: '5' },
+  { id:'', subject: 'Język niemiecki', type: 'Zadanie domowe', grade: '5' },
+  { id:'', subject: 'Język niemiecki', type: 'Zadanie domowe', grade: '5' },
+  { id:'', subject: 'Język niemiecki', type: 'Zadanie domowe', grade: '5' },
+  { id:'', subject: 'Język niemiecki', type: 'Zadanie domowe', grade: '5' },
+  { id:'', subject: 'Język niemiecki', type: 'Zadanie domowe', grade: '5' },
+  { id:'', subject: 'Biologia', type: 'Inne', grade: '2' },
+  { id:'', subject: 'Fizyka', type: 'Sprawdzian', grade: '5' },
+  { id:'', subject: 'Język niemiecki', type: 'Zadanie domowe', grade: '5' }
+];*/
 
 export default function Page() {
   const { push } = useRouter();
+  const [grades, setGrades]     = React.useState<[{id: string, subject: string, type: string, grade: string}]>([{id: '', subject: '', type: '', grade: '' }])
 
   React.useEffect(() => {
-    const checkUserAndGetUserGrades = async() => {
-      const user = auth.currentUser;
-
-      if(!user)
-        push("/login")
-
-      if(user?.uid !== undefined)
+    auth.onAuthStateChanged(async(user:any) => {
+      if(user)
       {
         // get the role of user
         const q             = query(collection(db, "UserRole"), where("userID", "==", user?.uid))
@@ -64,16 +62,44 @@ export default function Page() {
         querySnapshot.forEach((doc) => {
           role = doc.data()['role'];
         })
-        
+
         // get the user data
         const docRef  = doc(db, "Users", "commonUsers", role, user?.uid);
         const docSnap = await getDoc(docRef);
         let data:any  = {"school" : ""}
         if(docSnap.exists())
-          data    = docSnap.data();
-        
+        {
+          data['school'] = docSnap.data()['school'];
+        }
+
+        // get the grades of user
+        if(role == "Students")
+        {
+          const gradesQuery = query(collection(db, "Schools", data['school'], "Grades"));
+          const gradesSnap  = await getDocs(gradesQuery);
+          let grades:[{id: string, subject: string, type: string, grade: string}] = [{id: "", subject: "", type: "", grade: ""}];
+          let i = 0;
+
+          gradesSnap.forEach((el) => {
+            const data    = el.data();
+            let grade:any= {id: "", subject: "", type: "", grade:""};
+
+            grade.id       = el.id;
+            grade.subject  = data['subject'];
+            grade.type     = data['type'];
+            grade.grade    = data['mark'];
+            
+            grades[i] = grade;
+            i++;
+          })          
+          setGrades(grades);
+        }
       }
-    }
+      else
+      {
+        push("login");
+      }
+    })
   });
 
   return (
@@ -87,7 +113,7 @@ export default function Page() {
           </div>
         </div>
         <div className='px-4 pt-5 pb-10'>
-          <Grades names={subjects} />
+          <Grades names={subjects}  grades={grades}/>
         </div>
       </section>
     </div>
@@ -95,10 +121,11 @@ export default function Page() {
 }
 
 interface GradesProps {
+  grades: GradesObjectProps[]
   names: string[];
 }
 
-const Grades = ({ names }: GradesProps) => {
+const Grades = ({ names, grades}: GradesProps) => {
   return (
     <>
       {names.map((name, nameId) => (
@@ -128,7 +155,7 @@ const GradesItems = ({ grades, subject }: GradesItemsProps) => {
     <>
       {grades.map((grade, gradeId) => (
         <div key={gradeId}>
-          {subject === grade.subjectName ? (
+          {subject === grade.subject ? (
             <div
               className={`flex justify-center items-center mx-1 ${
                 grade.type === 'Sprawdzian'

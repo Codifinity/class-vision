@@ -11,7 +11,7 @@ import LastGrades from '../components/LastGrades';
 import ExamsSchedule from '../components/ExamsSchedule';
 
 import {db, auth} from "../firebase"
-import { doc, collection, getDoc, getDocs, query, where } from 'firebase/firestore';
+import { doc, collection, getDoc, getDocs, query, where, limit } from 'firebase/firestore';
 
 export default function Page() {
   const [userData, setUserData] = React.useState<any>({name: "..."});
@@ -23,7 +23,7 @@ export default function Page() {
       if(user)
       {
         // get the role of user
-        const q             = query(collection(db, "UserRole"), where("userID", "==", user?.uid))
+        const q             = query(collection(db, "UserRole"), where("userID", "==", user?.uid));
         const querySnapshot = await getDocs(q);
         let role:string     = "";
         querySnapshot.forEach((doc) => {
@@ -45,7 +45,7 @@ export default function Page() {
         // get the grades of user
         if(role == "Students")
         {
-          const gradesQuery = query(collection(db, "Schools", data['school'], "Grades"));
+          const gradesQuery = query(collection(db, "Schools", data['school'], "Grades"), where("student", "==", user?.uid));
           const gradesSnap  = await getDocs(gradesQuery);
           let grades:[{id: string, subject: string, type: string, mark: string}] = [{id: "", subject: "", type: "", mark: ""}];
           let i = 0;
