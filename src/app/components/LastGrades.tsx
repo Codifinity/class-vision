@@ -30,7 +30,7 @@ interface LastGradesProps {
 }
 export default function LastGrades({ grades }: LastGradesProps) {
   return (
-    <section className="border-gray-300 border-[1px] rounded-lg lg:w-2/3 xl:w-1/2 w-full min-h-[30rem] shadow-md">
+    <section className="border-gray-300 border-[1px] rounded-lg h-full shadow-md">
       <h3 className="text-dark-blue font-bold text-2xl my-5 mx-7">
         Ostatnie oceny
       </h3>
