@@ -1,6 +1,8 @@
 'use client';
 import * as React from 'react';
 
+import { ChangeEvent} from 'react';
+
 // Components
 import Navbar from '../../components/Navbar';
 import ProfilePicture from '../../components/ProfilePicture';
@@ -198,17 +200,17 @@ const Page = () => {
   const fetchUsers = async (
     role: string,
     setUser: React.Dispatch<React.SetStateAction<User[]>>
-  ) => {
+  ): Promise<User[]> => {
     const usersCollection = collection(db, 'Users', 'commonUsers', role);
-
+  
     try {
       const snapshot = await getDocs(usersCollection);
-
+  
       if (!snapshot.empty) {
-        const userList: User[] = snapshot.docs.map(doc => {
+        const userList: User[] = snapshot.docs.map((doc) => {
           const data = doc.data();
           const grades = data.grades || [];
-
+  
           return {
             id: doc.id,
             class: data.class || '',
@@ -218,18 +220,22 @@ const Page = () => {
             name: data.name || '',
             surname: data.surname || '',
             parent: data.parent || '',
-            school: data.school || ''
+            school: data.school || '',
           };
         });
-
+  
         setUser(userList);
+        return userList; // Explicitly return the user list
       } else {
         console.log(`No documents found for ${role}`);
+        return []; // Return an empty array or handle it based on your requirements
       }
     } catch (error) {
       console.error(`Error fetching ${role} users:`, error);
+      throw error; // Rethrow the error or handle it based on your requirements
     }
   };
+  
 
   React.useEffect(() => {
     const checkIfUserIsLoggedAndGetUsers = async () => {
@@ -253,6 +259,36 @@ const Page = () => {
   }, [push]);
 
   const [newConversation, setNewConversation] = useState(false);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+
+  const [query, setQuery] = useState('');
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setQuery(e.target.value);
+  };
+
+  const onSearch = async (query: string) => {
+    try {
+      const teachers: User[] = await fetchUsers('Teachers', setSearchResults);
+  
+      const teachersQueried = teachers.filter((teacher) =>
+        teacher.name.toLowerCase().includes(query.toLowerCase())
+      );
+  
+      const finalTeachersQuery = teachersQueried.filter((teacher) =>
+        teacher.school == userData['school']
+      );
+
+      setSearchResults(finalTeachersQuery);
+    } catch (error) {
+      console.error('Error fetching teachers:', error);
+    }
+  };    
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    onSearch(query);
+  };
 
   return (
     <div className="w-full h-screen">
@@ -302,11 +338,20 @@ const Page = () => {
               <BsSearch />
             </div>
             <div className="bg-red-100 w-full">
-              <input
-                type="text"
-                placeholder="Wyszukaj nauczyciela"
-                className="w-full outline-none"
-              />
+              <form onSubmit={handleSubmit}>
+                <input
+                  type="text"
+                  value={query}
+                  onChange={handleChange}
+                  placeholder="Wyszukaj nauczyciela"
+                  className="w-full outline-none"
+                />
+              </form>
+              <ul>
+                {searchResults.map((user) => (
+                  <li key={user.id}>{user.name}</li>
+                ))}
+              </ul>
             </div>
           </div>
 
