@@ -9,8 +9,7 @@ export default function HeroSection() {
         Class<span className="text-blue">Vision</span>
       </h1>
       <p className="text-[#929292] lg:w-96 w-64 text-sm mt-5 text-center">
-        lorem ipsum lorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem
-        ipsumlorem ipsumlorem ipsumlorem ipsum
+        Odkryj nowoczesność w edukacji z naszym E-Dziennikiem już dziś!
       </p>
       <div className="flex md:flex-row flex-col justify-center items-center gap-5 md:mt-32 mt-24">
         <Link href="/login">

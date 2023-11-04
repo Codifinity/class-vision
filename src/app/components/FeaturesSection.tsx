@@ -11,8 +11,7 @@ export default function FeaturesSection() {
     <section className="flex flex-col justify-center items-center gap-2 mt-36 pb-44">
       <h3 className="font-semibold lg:text-[40px] text-3xl">Co oferujemy?</h3>
       <p className="text-[#929292] text-sm lg:w-96 w-64 text-center">
-        lorem ipsum lorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem ipsumlorem
-        ipsumlorem ipsumlorem ipsumlorem ipsum
+        Czy chciałbyś zrobić krok w przyszłość, gdy chodzi o prowadzenie dziennika szkolnego? Nasz E-Dziennik to idealne rozwiązanie! 
       </p>
       <div className="w-full flex flex-col justify-center items-center">
         <div className="w-full lg:block hidden">
@@ -26,21 +25,21 @@ export default function FeaturesSection() {
             name={'Szybkość i prostota'}
             icon={EasyUseImg}
             description={
-              'loremip sumloremi psumloremipsum loremipsum loremipsuml oremipsum'
+              'Intuicyjny interfejs sprawia, że korzystanie z E-Dziennika to czysta przyjemność.'
             }
           />
           <Feature
             name={'Nowoczesny design'}
             icon={WebDesigne}
             description={
-              'loremip sumloremi psumloremipsum loremipsum loremipsuml oremipsum'
+              'Jasne kolory i czytelna czcionka sprawiają, że korzystanie z E-Dziennika jest komfortowe i przyjemne.'
             }
           />
           <Feature
             name={'Funkcjonalność nie znana do tej pory'}
             icon={Lightbulb}
             description={
-              'loremip sumloremi psumloremipsum loremipsum loremipsuml oremipsum'
+              'Nasza intuicyjna, aplikacja zapewnia łatwą nawigację, bez względu na wiek czy poziom technologicznej wprawy.'
             }
           />
         </div>
