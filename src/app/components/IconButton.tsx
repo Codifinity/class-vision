@@ -1,8 +1,17 @@
 import * as React from 'react';
 
-const IconButton = ({ children }: { children: React.ReactNode }) => {
+const IconButton = ({
+  children,
+  click = undefined
+}: {
+  children: React.ReactNode;
+  click?: () => void;
+}) => {
   return (
-    <button className="p-2 rounded-md hover:bg-gray-200 text-custom-dark self-end">
+    <button
+      onClick={click}
+      className="p-2 rounded-md hover:bg-gray-200 text-custom-dark self-end"
+    >
       {children}
     </button>
   );
