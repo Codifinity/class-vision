@@ -24,26 +24,14 @@ import {
 export default function Page() {
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [userData, setUserData] = React.useState<any>({ name: '...' });
-  const [grades, setGrades] = React.useState<
-    [{ id: string; subject: string; type: string; mark: string }]
-  >([{ id: '', subject: '', type: '', mark: '' }]);
+  const [grades, setGrades] = React.useState<[{ id: string; subject: string; type: string; mark: string }]>([{ id: '', subject: '', type: '', mark: '' }]);
   const { push } = useRouter();
 
   React.useEffect(() => {
-    const checkUserandGetUserData = async () => {
-      const user = auth.currentUser;
-      if (!user) {
-        push('/login');
-      } else {
-        setIsLoading(false);
-      }
-
-      if (user?.uid !== undefined) {
-        // get the role of user
-        const q = query(
-          collection(db, 'UserRole'),
-          where('userID', '==', user?.uid)
-        );
+    auth.onAuthStateChanged(async(user:any) => {
+      if(user)
+      {
+        const q = query(collection(db, 'UserRole'), where('userID', '==', user?.uid));
         const querySnapshot = await getDocs(q);
         let role: string = '';
         querySnapshot.forEach(doc => {
@@ -63,9 +51,7 @@ export default function Page() {
 
         // get the grades of user
         if (role == 'Students') {
-          const gradesQuery = query(
-            collection(db, 'Schools', data['school'], 'Grades'), where("student", "==", user?.uid));
-          );
+          const gradesQuery = query(collection(db, 'Schools', data['school'], 'Grades'), where("student", "==", user?.uid));
           const gradesSnap = await getDocs(gradesQuery);
           let grades: [
             { id: string; subject: string; type: string; mark: string }
@@ -84,21 +70,16 @@ export default function Page() {
             grades[i] = grade;
             i++;
           })          
-          });
-
-          //console.log("size: " + grades.length)
-
-          //grades = [{id: "qDuWELWh1arzAzYq6kio", subject: "Matematyka", type: "Sprawdzian", mark: "4" }]
-          //console.log(grades);
-
-          if (grades[0].id != '') {
-            //setGrades([{id: "", subject: "Matematyka", type: "Sprawdzian", mark: "3" }])
-            setGrades(grades);
+          setGrades(grades);
         }
-      }
-    };
 
-    setTimeout(async () => checkUserandGetUserData(), 200);
+        setIsLoading(false);
+      }
+      else
+      {
+        push("/login");
+      }
+    })
   }, [push]);
 
   if (isLoading === true) {
