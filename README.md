@@ -1,7 +1,6 @@
 # Class Vision
 
-Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum
-
+Class Vision to nowoczesny e-dziennik, wyróżniający się świeżym i nowoczesnym podejściem jeśli chodzi o design, ale przede wszystkim nowoczesnym podejściem jeśli chodzi o samą mechanikę działania. Sposób komunikacji w społeczności szkolnej jaką oferuje Class Vision jest innowacyjny i niespotykany do tej pory w żadnej innej tego typu aplikacji
 ## Jak uruchomić aplikację Class Vision?
 
 Aby uruchomić lokalnie aplikację **Class Vision** na urządzeniu musi być zainstalowany **Node.js** oraz **NPM**. Należy pobrać repozytorium z kodem aplikacji i otworzyć terminal w lokalizacji z aplikacją. Następnie trzeba wykonać poniższe kroki:

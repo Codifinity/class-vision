@@ -37,7 +37,7 @@ export default function Navbar() {
             <Link href={'/grades'}>
               <button className="hover:text-dark-blue">Oceny</button>
             </Link>
-            <Link href={'/sprawdziany-i-kartkowki/1'}>
+            <Link href={'/exams/1'}>
               <button className="hover:text-dark-blue">
                 Sprawdziany i kartkówki
               </button>
@@ -46,7 +46,7 @@ export default function Navbar() {
               <button className="hover:text-dark-blue">Plan lekcji</button>
             </Link>
             <Link href={'/attendance'}>
-              <button className="hover:text-dark-blue">Frekwrencja</button>
+              <button className="hover:text-dark-blue">Frekwencja</button>
             </Link>
           </div>
           <div className="pr-10 flex flex-row justify-center items-center gap-5">
@@ -91,7 +91,7 @@ export default function Navbar() {
               <Link href={'/grades'}>
                 <button className="hover:text-dark-blue">Oceny</button>
               </Link>
-              <Link href={'/sprawdziany-i-kartkowki/1'}>
+              <Link href={'/exams/1'}>
                 <button className="hover:text-dark-blue">
                   Sprawdziany i kartkówki
                 </button>

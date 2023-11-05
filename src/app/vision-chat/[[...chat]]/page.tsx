@@ -39,18 +39,23 @@ import {
   setDoc,
   addDoc,
   orderBy,
+
   limit, 
   or
+
 } from 'firebase/firestore';
-import { getAuth } from "firebase/auth";
+import { getAuth } from 'firebase/auth';
 import { doc, updateDoc, getDoc, getDocs } from 'firebase/firestore';
 import { Timestamp } from 'firebase/firestore';
 
-
 import ChatModal from '@/app/components/ChatModal';
 import { useState } from 'react';
+
 import { truncate } from 'fs';
 import { sourceMapsEnabled } from 'process';
+
+import { FallingLines } from 'react-loader-spinner';
+
 
 interface User {
   id: string;
@@ -67,6 +72,8 @@ const Page = () => {
   const [userData2, setUserData2]       = React.useState<any>({});
 
   const [usersData, setUsersData]    = React.useState<User[]>([]);
+
+  const [isLoading, setisLoading] = React.useState<boolean>(true);
 
   const { push } = useRouter();
 
@@ -202,6 +209,7 @@ const Page = () => {
     }
   }
 
+
   const returnLastMessage = async(firstUserId:any, secondUserId:any) => {
     const convQ    = query(collection(db, "conversations"), or(where("users", "in", [[firstUserId, secondUserId]]),where("users", "in", [[secondUserId, firstUserId]])));
     const convSnap = await getDocs(convQ);
@@ -236,22 +244,25 @@ const Page = () => {
     }
   }
 
+
   React.useEffect(() => {
     const fetchUsers = async (
       setUser: React.Dispatch<React.SetStateAction<User[]>>
     ) => {
+
       const usersCollection = collection(db, 'Users');
   
+
       try {
         const snapshot = await getDocs(usersCollection);
-  
+
         if (!snapshot.empty) {
           const userList: User[] = snapshot.docs.map(doc => {
             const data = doc.data();
             const grades = data.grades || [];
             const user = auth.currentUser;
-            const seconduserId = doc.id;        
-            
+            const seconduserId = doc.id;
+
             return {
               id: doc.id,
               class: data.class || '',
@@ -266,36 +277,53 @@ const Page = () => {
               lastMessage: returnLastMessage(user?.uid, seconduserId)
             };
           });
-  
+
           setUser(userList);
+
         } 
 
       } 
       catch (error)
       {
         console.error(`Error fetching users:`, error);
+
       }
+
+      setisLoading(false);
     };
+
 
     const onChanged = async(user: any) => {
       if(user)
       {      
         await getUser().then(() => {
           fetchUsers(setUsersData);
+
         });
-  
+
         loadChat(auth.currentUser?.uid);
+      } else {
+        push('/login');
       }
-      else
-      {
-        push("/login");
-      }
-    }
+    };
 
     auth.onAuthStateChanged(onChanged);
   }, [push]);
 
   const [newConversation, setNewConversation] = useState(false);
+
+  if (isLoading === true) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <FallingLines
+          color="#00A7EE"
+          width="100"
+          visible={true}
+          aria-label="falling-lines-loading"
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-screen">
