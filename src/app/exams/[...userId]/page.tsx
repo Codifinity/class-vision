@@ -10,26 +10,28 @@ const Page = () => {
       <Navbar />
 
       <div className="flex h-[calc(100vh-5rem)] pt-5 px-10 flex-col">
-        <h1 className="font-bold text-4xl text-center text-custom-dark">
-          Sprawdziany i kartkówki
-        </h1>
+        <div className='w-full bg-white pt-8 mb-4 rounded-t-xl border-2'>
+          <h1 className="font-bold text-4xl text-center text-custom-dark">
+            Sprawdziany i kartkówki
+          </h1>
+          {/* Date swiper */}
+          <div className="w-full flex items-center justify-center my-10 gap-6">
+            {/* Back arrow */}
+            <button className="rounded-full bg-light-blue flex items-center justify-center hover:bg-blue p-1">
+              <IoIosArrowForward className="rotate-180 text-white text-2xl font-bold mx-auto" />
+            </button>
 
-        {/* Date swiper */}
-        <div className="w-full flex items-center justify-center my-10 gap-6">
-          {/* Back arrow */}
-          <button className="rounded-full bg-light-blue flex items-center justify-center hover:bg-blue p-1">
-            <IoIosArrowForward className="rotate-180 text-white text-2xl font-bold mx-auto" />
-          </button>
+            {/* Date */}
+            <p className="text-2xl font-medium text-custom-dark">
+              30.10 - 05.11
+            </p>
 
-          {/* Date */}
-          <p className="text-2xl font-medium text-custom-dark">30.10 - 05.11</p>
-
-          {/* Front arrow */}
-          <button className="rounded-full bg-light-blue flex items-center justify-center hover:bg-blue p-1">
-            <IoIosArrowForward className="text-white text-2xl font-bold" />
-          </button>
+            {/* Front arrow */}
+            <button className="rounded-full bg-light-blue flex items-center justify-center hover:bg-blue p-1">
+              <IoIosArrowForward className="text-white text-2xl font-bold" />
+            </button>
+          </div>
         </div>
-
         {/* days container */}
         <div className="scrollbar-thin scrollbar-thumb-custom-dark/40 scrollbar-track-gray-200 px-2 w-full flex flex-col overflow-y-auto gap-4">
           {/* single day container */}
@@ -75,7 +77,6 @@ const Page = () => {
                 testDescription="Przeczytaj lekturę i utrwal wiadomości"
                 testType="kartkówka"
               />
-
             </div>
           </div>
 

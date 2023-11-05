@@ -28,7 +28,7 @@ let tomorrow: lessonObject[] = [
 
 export default function Timetable() {
   return (
-    <section className="border-gray-300 border-[1px]  rounded-lg px-5 lg:mt-0 py-8 shadow-md  w-full">
+    <section className="border-gray-300 border-[1px] rounded-lg bg-white px-5 lg:mt-0 py-8 shadow-md  w-full">
       <div className="flex flex-row items-center justify-between">
         <h3 className="text-dark-blue font-bold text-2xl">Plan lekcji</h3>
       </div>

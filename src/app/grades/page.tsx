@@ -138,7 +138,7 @@ export default function Page() {
     <div className="w-full">
       <Navbar />
       <section className="border-[#B4B4B4] border-[1px] rounded-lg lg:w-auto lg:mx-5 my-3 w-auto mx-2 min-h-[30rem] shadow-md">
-        <div className="w-full flex md:flex-row flex-col justify-between items-center">
+        <div className="w-full flex md:flex-row flex-col justify-between items-center bg-white rounded-t-lg pb-5 border-b-2 border-[#C8C8C8]">
           <h3 className="font-semibold text-4xl pt-7 px-8">Oceny</h3>
           <div className="md:mx-5 mx-0 md:pt-0 pt-3">
             <Dropdown callback={loadGrades} />
@@ -171,7 +171,7 @@ const Grades = ({ names, grades }: GradesProps) => {
         if (grades.find(grade => grade.subject === name)) {
           return (
             <div
-              className="flex flex-row justify-start items-start  border-[#C8C8C8] border-[1px] rounded-lg w-auto mx-3 my-2 mt-4 "
+              className="flex flex-row justify-start items-start bg-white border-[#C8C8C8] border-[1px] rounded-lg w-auto mx-3 my-2 mt-4 "
               key={nameId}
             >
               <div className="flex flex-row justify-start items-center pr-3 pl-4 border-[#C8C8C8] border-r-[1px] py-1.5 h-full">

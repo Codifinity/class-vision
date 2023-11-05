@@ -23,14 +23,14 @@ const TestCard = ({
     testType === 'odpowiedź' ? 'bg-[#339873]' : '';
 
   return (
-    <div className={`w-full flex flex-col my-2 ${backgroundColor}`}>
+    <div className={`w-full flex flex-col my-2 rounded-lg ${backgroundColor}`}>
       <div className="py-2">
         <p className="text-white font-bold text-center">
           {testSubject.toUpperCase()} - {testType.toUpperCase()}
         </p>
       </div>
 
-      <div className="w-full bg-light-gray p-2">
+      <div className="w-full bg-white p-2 pb-4">
         <p className="text-2xl text-custom-dark font-semibold">
           {testName} - {testDescription}
         </p>
