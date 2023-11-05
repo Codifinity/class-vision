@@ -58,45 +58,42 @@ export default function Page() {
       ] = [{ id: '', subject: '', type: '', grade: '' }];
 
       let i = 0;
-      allGrades.forEach(el => {
-        if (el.subject == subjectName) newGrades[i] = el;
-      });
+
+      allGrades.forEach((el) => {
+        if(el.subject == subjectName)
+        newGrades[i] = el;
+      })
+      
 
       setGrades(newGrades);
     }
   };
 
   React.useEffect(() => {
-    auth.onAuthStateChanged(async (user: any) => {
-      if (user) {
-        // get the role of user
-        const q = query(
-          collection(db, 'UserRole'),
-          where('userID', '==', user?.uid)
-        );
-        const querySnapshot = await getDocs(q);
-        let role: string = '';
-        querySnapshot.forEach(doc => {
-          role = doc.data()['role'];
-        });
 
+    auth.onAuthStateChanged(async(user:any) => {
+      if(user)
+      {
         // get the user data
-        const docRef = doc(db, 'Users', 'commonUsers', role, user?.uid);
+        const docRef  = doc(db, "Users", user?.uid);
         const docSnap = await getDoc(docRef);
-        let data: any = { school: '' };
-        if (docSnap.exists()) {
-          data['school'] = docSnap.data()['school'];
-        }
+        let data:any  = {role: "", school : ""}
+        if(docSnap.exists())
+        {
+          const data_in  = docSnap.data();
+          data.school    = data_in['school'];
+          data.role      = data_in['role'];
 
+        }
+        
         // get the grades of user
-        if (role == 'Students') {
-          const gradesQuery = query(
-            collection(db, 'Schools', data['school'], 'Grades')
-          );
-          const gradesSnap = await getDocs(gradesQuery);
-          let grades: [
-            { id: string; subject: string; type: string; grade: string }
-          ] = [{ id: '', subject: '', type: '', grade: '' }];
+
+        if(data.role == "Students")
+        {
+          const gradesQuery = query(collection(db, 'Schools', data['school'], 'Grades'), where("student", "==", user?.uid));
+          const gradesSnap  = await getDocs(gradesQuery);
+          let grades:[{id: string, subject: string, type: string, grade: string}] = [{id: "", subject: "", type: "", grade: ""}];
+
           let i = 0;
 
           gradesSnap.forEach(el => {
@@ -110,7 +107,10 @@ export default function Page() {
 
             grades[i] = grade;
             i++;
-          });
+
+          })
+
+
           setGrades(grades);
           setAllGrades(grades);
         }

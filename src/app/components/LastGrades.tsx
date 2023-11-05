@@ -15,16 +15,6 @@ let subjects = [
   'Geografia',
   'Język angielski'
 ];
-/*
-let grades: GradesObjectProps[] = [
-  {id: "", subject: 'Matematyka',      type: 'Sprawdzian',     grade: '3' },
-  {id: "", subject: 'Język polski',    type: 'Kartkówka',      grade: '1' },
-  {id: "", subject: 'Historia',        type: 'Inne',           grade: '2' },
-  {id: "", subject: 'Geografia',       type: 'Sprawdzian',     grade: '5' },
-  {id: "", subject: 'Język angielski', type: 'Zadanie domowe', grade: '5' },
-  {id: "", subject: 'Język angielski', type: 'Inne',           grade: '2' }
-];*/
-
 interface LastGradesProps {
   grades: [{ id: string; subject: string; type: string; mark: string }];
 }

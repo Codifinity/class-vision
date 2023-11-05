@@ -22,8 +22,10 @@ export default function LoginForm() {
 
   const { push } = useRouter();
 
-  React.useEffect(() => {
-    auth.onAuthStateChanged((authUser: any) => {
+  
+  useEffect(() => {
+    auth.onAuthStateChanged((authUser:any) => {
+
       if (authUser) {
         push('/dashboard');
       } else {

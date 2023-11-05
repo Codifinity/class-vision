@@ -39,7 +39,10 @@ import {
   setDoc,
   addDoc,
   orderBy,
-  limit
+
+  limit, 
+  or
+
 } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { doc, updateDoc, getDoc, getDocs } from 'firebase/firestore';
@@ -47,30 +50,28 @@ import { Timestamp } from 'firebase/firestore';
 
 import ChatModal from '@/app/components/ChatModal';
 import { useState } from 'react';
+
+import { truncate } from 'fs';
+import { sourceMapsEnabled } from 'process';
+
 import { FallingLines } from 'react-loader-spinner';
+
 
 interface User {
   id: string;
   [key: string]: any;
 }
 
-interface Role {
-  name: string;
-  users: User[];
-}
-
 const Page = () => {
-  const [isChatOpen, setIsChatOpen] = React.useState<boolean>(false);
-  const [chatContent, setChatContent] = React.useState<string>('');
-  const [messages, setMessages] = React.useState<any[]>();
-  const isMobile = useMediaQuery('(max-width: 1280px)');
+  const [isChatOpen, setIsChatOpen]     = React.useState<boolean>(false);
+  const [chatContent, setChatContent]   = React.useState<string>('');
+  const [messages, setMessages]         = React.useState<any[]>();
+  const isMobile                        = useMediaQuery('(max-width: 1280px)');
 
-  const [userData, setUserData] = React.useState<any>({});
-  const [userData2, setUserData2] = React.useState<any>({});
+  const [userData, setUserData]         = React.useState<any>({});
+  const [userData2, setUserData2]       = React.useState<any>({});
 
-  const [studentsData, setStudentsData] = React.useState<User[]>([]);
-  const [parentsData, setParentsData] = React.useState<User[]>([]);
-  const [teacherData, setTeacherData] = React.useState<User[]>([]);
+  const [usersData, setUsersData]    = React.useState<User[]>([]);
 
   const [isLoading, setisLoading] = React.useState<boolean>(true);
 
@@ -82,93 +83,103 @@ const Page = () => {
 
   const toggleChat = async (
     isOpen: boolean,
-    role: string,
     secondUserId: any
   ) => {
     setIsChatOpen(isOpen);
-
+    
     // get the user data from db
-    const docRef = doc(db, 'Users', 'commonUsers', role, secondUserId);
+    const docRef = doc(db, 'Users', secondUserId);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      console.log('user exists');
       const data = docSnap.data();
       data.id = docSnap.id;
 
-      // set the user in the state
+      // set the second user in the state
       setUserData2(data);
 
       // check if the conversation exists
       const user = auth.currentUser;
-      const convRef = doc(db, 'conversations', user?.uid + '_' + secondUserId);
-      const convSnap = await getDoc(convRef);
+      const convQ = query(collection(db, "conversations"), or(where("users", "in", [[user?.uid, secondUserId]]),where("users", "in", [[secondUserId, user?.uid]])));
+      const convSnap = await getDocs(convQ);
 
-      if (!convSnap.exists()) {
-        // if conversation does not exists - create a plain documet
-        await setDoc(
-          doc(db, 'conversations', user?.uid + '_' + secondUserId),
-          {}
-        );
-        console.log('converstaion does not exist');
+      if(convSnap.empty)
+      {
+        await addDoc(collection(db, "conversations"), {
+          users: [user?.uid, docSnap.id]
+        });
       }
-
-      resetChatMessages(user?.uid, data.id);
+      else
+      {
+        convSnap.forEach(async(el) => {
+          const docName = el.id;
+          const messagesQ = query(collection(db, "conversations", docName, "messages"), orderBy("timestamp"));
+          const messagesSnap = await getDocs(messagesQ);
+          let messages: any[] = [];
+          messagesSnap.forEach((el) => {
+            const data = el.data();
+            data.id = el.id;
+            messages.push(data);
+          })
+  
+          setMessages(messages);
+        })
+      }
     }
   };
 
   // load messages in chat
   const loadChat = async (user2id: any) => {
     const user = auth.currentUser;
-    const docName = user?.uid + '_' + user2id;
 
-    const docRef = doc(db, 'conversations', docName);
-    const docSnap = await getDoc(docRef);
+    console.log(user?.uid + ", " + user2id);
+    const convQ = query(collection(db, "conversations"), or(where("users", "in", [[user?.uid, user2id]]),where("users", "in", [[user2id, user?.uid]])));
+    const convSnap = await getDocs(convQ);
+    let docName:string = "";
 
-    if (docSnap.exists()) {
-      // if exists - get all document in messages subcollection
-      const collectionRef = collection(
-        db,
-        'conversations',
-        docName,
-        'messages'
-      );
-      const q = query(collectionRef, orderBy('timestamp'));
-      const querySnapshot = await getDocs(q);
+    convSnap.forEach(async(el) => {
+      docName = el.id;
+    })
 
-      let messages: any[] = [];
-
-      querySnapshot.forEach(doc => {
-        const data = doc.data();
-        data.id = doc.id;
-        messages.push(data);
-      });
-
-      setMessages(messages);
+    if(docName !== "")
+    {
+      const docRef = doc(db, 'conversations', docName);
+      const docSnap = await getDoc(docRef);
+  
+      if (docSnap.exists()) {
+        const collectionRef = collection(
+          db,
+          'conversations',
+          docName,
+          'messages'
+        );
+        const q = query(collectionRef, orderBy('timestamp'));
+        const querySnapshot = await getDocs(q);
+  
+        let messages: any[] = [];
+  
+        querySnapshot.forEach(doc => {
+          const data = doc.data();
+          data.id = doc.id;
+          messages.push(data);
+        });
+  
+        setMessages(messages);
+      }
     }
-  };
-
-  const resetChatMessages = async (user1Id: any, user2Id: any) => {
-    const docName = user1Id + '_' + user2Id;
-
-    const collectionRef = collection(db, 'conversations', docName, 'messages');
-    const q = query(collectionRef, orderBy('timestamp'));
-    const querySnapshot = await getDocs(q);
-
-    let messages: any[] = [];
-
-    querySnapshot.forEach(doc => {
-      const data = doc.data();
-      data.id = doc.id;
-      messages.push(data);
-    });
-
-    setMessages(messages);
   };
 
   const sendMessage = async () => {
     const user = auth.currentUser;
-    const docName = user?.uid + '_' + userData2.id;
+    
+    const convQ = query(collection(db, "conversations"), or(where("users", "in", [[user?.uid, userData2.id]]),where("users", "in", [[userData2.id, user?.uid]])));
+    const convSnap = await getDocs(convQ);
+    let docName:string = "";
+
+    convSnap.forEach(async(el) => {
+      docName = el.id;      
+    })
+
     await addDoc(collection(db, 'conversations', docName, 'messages'), {
       sender: user?.uid,
       content: chatContent,
@@ -176,15 +187,15 @@ const Page = () => {
     });
 
     setChatContent('');
-    resetChatMessages(user?.uid, userData2.id);
+    loadChat(userData2.id);
   };
 
   // get user with role
-  async function getUser(role: string) {
+  async function getUser() {
     const user = auth.currentUser;
     if (user) {
       const uid: any = user?.uid;
-      const docRef = doc(db, 'Users', 'commonUsers', role, uid);
+      const docRef   = doc(db, 'Users', uid);
 
       const docSnap = await getDoc(docRef);
 
@@ -194,43 +205,53 @@ const Page = () => {
 
         setUserData(data);
         setUserData2(data);
-
-        return JSON.stringify(data);
       }
     }
   }
 
-  const returnLastMessage = async (firstUserId: any, secondUserId: any) => {
-    const q = query(
-      collection(
-        db,
-        'conversations',
-        firstUserId + '_' + secondUserId,
-        'messages'
-      ),
-      orderBy('timestamp', 'desc'),
-      limit(1)
-    );
-    const docsSnap = await getDocs(q);
 
-    let result: string = '';
+  const returnLastMessage = async(firstUserId:any, secondUserId:any) => {
+    const convQ    = query(collection(db, "conversations"), or(where("users", "in", [[firstUserId, secondUserId]]),where("users", "in", [[secondUserId, firstUserId]])));
+    const convSnap = await getDocs(convQ);
+    let docName:string = "";
 
-    docsSnap.forEach(el => {
-      const data = el.data();
-      if (data['sender'] == firstUserId) result += 'Ty: ';
+    convSnap.forEach(async(el) => {
+      docName = el.id;      
+    })
+    if(docName !== "")
+    {
+      const q        = query(collection(db, "conversations", docName, "messages"), orderBy("timestamp", "desc"), limit(1));
+      const docsSnap = await getDocs(q);
 
-      result += data['content'];
-    });
+      let result:string = "";
 
-    return result;
-  };
+      docsSnap.forEach((el) => {
+        const data         = el.data();
+        let content:string = data['content'];
+
+        if(content.length > 45)
+        {
+          content = content.substring(0, 45) + "...";
+        }
+
+        if(data['sender'] == firstUserId)
+          result += "Ty: ";
+        
+        result += content;
+      })
+
+      return result;
+    }
+  }
+
 
   React.useEffect(() => {
     const fetchUsers = async (
-      role: string,
       setUser: React.Dispatch<React.SetStateAction<User[]>>
     ) => {
-      const usersCollection = collection(db, 'Users', 'commonUsers', role);
+
+      const usersCollection = collection(db, 'Users');
+  
 
       try {
         const snapshot = await getDocs(usersCollection);
@@ -258,22 +279,26 @@ const Page = () => {
           });
 
           setUser(userList);
-        } else {
-          console.log(`No documents found for ${role}`);
-        }
-      } catch (error) {
-        console.error(`Error fetching ${role} users:`, error);
+
+        } 
+
+      } 
+      catch (error)
+      {
+        console.error(`Error fetching users:`, error);
+
       }
 
       setisLoading(false);
     };
 
-    const onChanged = async (user: any) => {
-      if (user) {
-        await getUser('Students').then(() => {
-          fetchUsers('Students', setStudentsData);
-          fetchUsers('Teachers', setTeacherData);
-          fetchUsers('Parents', setParentsData);
+
+    const onChanged = async(user: any) => {
+      if(user)
+      {      
+        await getUser().then(() => {
+          fetchUsers(setUsersData);
+
         });
 
         loadChat(auth.currentUser?.uid);
@@ -365,43 +390,15 @@ const Page = () => {
               lastMessageUserName="Małgorzata"
               lastMessage="O której zbiórka?"
               lastMessageTime="16:34"/> */}
-            {studentsData.map((student, index) => {
+            {usersData.map((user, index) => {
               return (
                 <ConversationCard
-                  key={student.id}
-                  click={() => toggleChat(true, 'Students', student.id)}
+                  key={user.id}
+                  click={() => toggleChat(true, user.id)}
                   src="/preview-pic.jpg"
-                  name={student.name}
-                  surname={student.surname}
-                  lastMessage={student.lastMessage}
-                  lastMessageTime="16:34"
-                />
-              );
-            })}
-
-            {parentsData.map(parent => {
-              return (
-                <ConversationCard
-                  key={parent.id}
-                  click={() => toggleChat(true, 'Parents', parent.id)}
-                  src="/preview-pic.jpg"
-                  name={parent.name}
-                  surname={parent.name}
-                  lastMessage={parent.lastMessage}
-                  lastMessageTime="16:34"
-                />
-              );
-            })}
-
-            {teacherData.map(teacher => {
-              return (
-                <ConversationCard
-                  key={teacher.id}
-                  click={() => toggleChat(true, 'Teachers', teacher.id)}
-                  src="/preview-pic.jpg"
-                  name={teacher.name}
-                  surname={teacher.surname}
-                  lastMessage={teacher.lastMessage}
+                  name={user.name}
+                  surname={user.surname}
+                  lastMessage={user.lastMessage}
                   lastMessageTime="16:34"
                 />
               );
