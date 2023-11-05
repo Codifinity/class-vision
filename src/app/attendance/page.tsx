@@ -25,7 +25,7 @@ export default function attendance() {
           </div>
           <div className="grid grid-cols-1">
             <div className="flex flex-row lg:mr-10 font-semibold lg:text-lg text-md lg:ml-10 ml-5">
-              PYT.01. Podstawy programowania w PHP PHP PHP
+              Język polski
             </div>
             <div className="lg:mr-10 lg:text-sm text-xs lg:ml-10 ml-5">Obecność</div>
           </div>
@@ -37,7 +37,7 @@ export default function attendance() {
           </div>
           <div className="grid grid-cols-1">
             <div className="flex flex-row lg:mr-10 font-semibold lg:text-lg text-md lg:ml-10 ml-5">
-              PYT.01. Podstawy programowania w PHP PHP PHP
+              Matematyka
             </div>
             <div className="lg:mr-10 lg:text-sm text-xs lg:ml-10 ml-5">Nieobecność</div>
           </div>
@@ -49,7 +49,7 @@ export default function attendance() {
           </div>
           <div className="grid grid-cols-1">
             <div className="flex flex-row lg:mr-10 font-semibold lg:text-lg text-md lg:ml-10 ml-5">
-              PYT.01. Podstawy programowania w PHP PHP PHP
+              Wychowanie fizyczne
             </div>
             <div className="lg:mr-10 lg:text-sm text-xs lg:ml-10 ml-5">Nieznany</div>
           </div>
@@ -61,7 +61,7 @@ export default function attendance() {
           </div>
           <div className="grid grid-cols-1">
             <div className="flex flex-row lg:mr-10 font-semibold lg:text-lg text-md lg:ml-10 ml-5">
-              PYT.01. Podstawy programowania w PHP PHP PHP
+              Fizyka
             </div>
             <div className="lg:mr-10 lg:text-sm text-xs lg:ml-10 ml-5">Nieznany</div>
           </div>
@@ -73,7 +73,7 @@ export default function attendance() {
           </div>
           <div className="grid grid-cols-1">
             <div className="flex flex-row lg:mr-10 font-semibold lg:text-lg text-md lg:ml-10 ml-5">
-              PYT.01. Podstawy programowania w PHP PHP PHP
+              Biologia
             </div>
             <div className="lg:mr-10 lg:text-sm text-xs lg:ml-10 ml-5">Nieznany</div>
           </div>

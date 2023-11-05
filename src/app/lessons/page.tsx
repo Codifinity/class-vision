@@ -9,48 +9,46 @@ interface lessonObject {
 }
 
 let monday: lessonObject[] = [
-  { name: 'Matematyka', start: '7:40', end: '8:25' },
-  { name: 'Język polski', start: '8:30', end: '9:20' },
-  { name: 'Matematyka', start: '7:40', end: '8:25' },
-  { name: 'Język polski', start: '8:30', end: '9:20' },
-  { name: 'Matematyka', start: '7:40', end: '8:25' },
-  { name: 'Język polski', start: '8:30', end: '9:20' }
+  { name: 'Fizyka', start: '7:40', end: '8:25' },
+  { name: 'Język polski', start: '8:30', end: '9:15' },
+  { name: 'Język polski', start: '9:20', end: '10:05' },
+  { name: 'Matematyka', start: '10:10', end: '10:55' },
+  { name: 'Język angielski', start: '11:10', end: '11:55' },
+  { name: 'Język angielski', start: '12:10', end: '12:55' }
 ];
 
 let tuesday: lessonObject[] = [
-  { name: 'wf', start: '7:40', end: '8:25' },
-  { name: 'Język angielski', start: '8:30', end: '9:20' },
-  { name: 'Matematyka', start: '7:40', end: '8:25' },
-  { name: 'Fizyka', start: '8:30', end: '9:20' },
-  { name: 'Matematyka', start: '7:40', end: '8:25' },
-  { name: 'Język polski', start: '8:30', end: '9:20' }
+  { name: 'Wychowanie fizyczne', start: '7:40', end: '8:25' },
+  { name: 'Wychowanie fizyczne', start: '8:30', end: '9:15' },
+  { name: 'Chemia', start: '9:20', end: '10:05' },
+  { name: 'Język polski', start: '10:10', end: '10:55' },
+  { name: 'Matematyka', start: '11:10', end: '11:55' }
 ];
 
 let wednesday: lessonObject[] = [
-  { name: 'wf', start: '7:40', end: '8:25' },
-  { name: 'Język angielski', start: '8:30', end: '9:20' },
   { name: 'Matematyka', start: '7:40', end: '8:25' },
-  { name: 'Fizyka', start: '8:30', end: '9:20' },
-  { name: 'Matematyka', start: '7:40', end: '8:25' },
-  { name: 'Język polski', start: '8:30', end: '9:20' }
+  { name: 'Matematyka', start: '8:30', end: '9:15' },
+  { name: 'Fizyka', start: '9:20', end: '10:05' },
+  { name: 'Biologia', start: '10:10', end: '10:55' },
+  { name: 'Geografia', start: '11:10', end: '11:55' },
+  { name: 'Chemia', start: '12:10', end: '12:55' }
 ];
 
 let thursday: lessonObject[] = [
-  { name: 'wf', start: '7:40', end: '8:25' },
-  { name: 'Język angielski', start: '8:30', end: '9:20' },
-  { name: 'Matematyka', start: '7:40', end: '8:25' },
-  { name: 'Fizyka', start: '8:30', end: '9:20' },
-  { name: 'Matematyka', start: '7:40', end: '8:25' },
-  { name: 'Język polski', start: '8:30', end: '9:20' }
+  { name: 'Chemia', start: '8:30', end: '9:15' },
+  { name: 'Język angielski', start: '9:20', end: '10:05' },
+  { name: 'Język angielski', start: '10:10', end: '10:55' },
+  { name: 'Język niemiecki', start: '11:10', end: '11:55' },
+  { name: 'Matematyka', start: '12:10', end: '12:55' },
+  { name: 'Język polski', start: '13:00', end: '13:45' }
 ];
 
 let friday: lessonObject[] = [
-  { name: 'wf', start: '7:40', end: '8:25' },
-  { name: 'Język angielski', start: '8:30', end: '9:20' },
-  { name: 'Matematyka', start: '7:40', end: '8:25' },
-  { name: 'Fizyka', start: '8:30', end: '9:20' },
-  { name: 'Matematyka', start: '7:40', end: '8:25' },
-  { name: 'Język polski', start: '8:30', end: '9:20' }
+  { name: 'Język polski', start: '9:20', end: '10:05' },
+  { name: 'Matematyka', start: '10:10', end: '10:55' },
+  { name: 'Wychowanie fizyczne', start: '11:10', end: '11:55' },
+  { name: 'Fizyka', start: '12:10', end: '12:55' },
+  { name: 'Biologia', start: '13:00', end: '8:25' }
 ];
 
 export default function Page() {

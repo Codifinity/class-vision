@@ -13,19 +13,19 @@ let exams: examsProps[] = [
     subject: 'matematyka',
     type: 'sprawdzian',
     description: 'Sprawdzian z wielomianów',
-    date: '05-03-2023'
+    date: '08-11-2023'
   },
   {
     subject: 'jezyk polski',
     type: 'kartkowka',
     description: 'Test wiedzy z roku 1984',
-    date: '05-03-2023'
+    date: '09-11-2023'
   },
   {
     subject: 'geografia',
     type: 'odpowiedz',
     description: 'Rzeki polski',
-    date: '05-03-2023'
+    date: '15-11-2023'
   }
 ];
 
@@ -39,7 +39,7 @@ export default function ExamsSchedule() {
         <Exams exams={exams} />
       </div>
       <div className="w-full lg:mt-16 lg:mb-5 font-semibold text-xl text-[#00BBE4] lg:mx-10 mx-5 mt-10 mb-5">
-        <Link href="#">Zobacz wszystkie sprawdziany</Link>
+        <Link href="/exams/1">Zobacz wszystkie sprawdziany</Link>
       </div>
     </section>
   );
