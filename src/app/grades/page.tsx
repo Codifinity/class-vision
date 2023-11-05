@@ -157,21 +157,33 @@ interface GradesProps {
 }
 
 const Grades = ({ names, grades }: GradesProps) => {
+  if (grades[0].id === '' || grades === undefined || grades === null) {
+    return (
+      <div className="mx-3 my-2 mt-4">
+        <p className="text-2xl font-bold">Brak ocen</p>
+      </div>
+    );
+  }
+  console.log(grades);
   return (
     <>
-      {names.map((name, nameId) => (
-        <div
-          className="flex flex-row justify-start items-start  border-[#C8C8C8] border-[1px] rounded-lg w-auto mx-3 my-2 mt-4 "
-          key={nameId}
-        >
-          <div className="flex flex-row justify-start items-center pr-3 pl-4 border-[#C8C8C8] border-r-[1px] py-1.5 h-full">
-            <p className="font-semibold text-base lg:text-xl">{name} </p>
-          </div>
-          <div className="flex justify-center items-start flex-wrap lg:py-0 pb-1">
-            <GradesItems grades={grades} subject={name} />
-          </div>
-        </div>
-      ))}
+      {names.map((name, nameId) => {
+        if (grades.find(grade => grade.subject === name)) {
+          return (
+            <div
+              className="flex flex-row justify-start items-start  border-[#C8C8C8] border-[1px] rounded-lg w-auto mx-3 my-2 mt-4 "
+              key={nameId}
+            >
+              <div className="flex flex-row justify-start items-center pr-3 pl-4 border-[#C8C8C8] border-r-[1px] py-1.5 h-full">
+                <p className="font-semibold text-base lg:text-xl">{name} </p>
+              </div>
+              <div className="flex justify-center items-start flex-wrap lg:py-0 pb-1">
+                <GradesItems grades={grades} subject={name} />
+              </div>
+            </div>
+          );
+        }
+      })}
     </>
   );
 };
