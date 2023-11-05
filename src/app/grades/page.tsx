@@ -71,7 +71,7 @@ export default function Page() {
         // get the grades of user
         if(data.role == "Students")
         {
-          const gradesQuery = query(collection(db, "Schools", data.school, "Grades"));
+          const gradesQuery = query(collection(db, 'Schools', data['school'], 'Grades'), where("student", "==", user?.uid));
           const gradesSnap  = await getDocs(gradesQuery);
           let grades:[{id: string, subject: string, type: string, grade: string}] = [{id: "", subject: "", type: "", grade: ""}];
           let i = 0;

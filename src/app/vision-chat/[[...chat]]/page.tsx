@@ -40,6 +40,7 @@ import {
   addDoc,
   orderBy,
   limit, 
+  or
 } from 'firebase/firestore';
 import { getAuth } from "firebase/auth";
 import { doc, updateDoc, getDoc, getDocs } from 'firebase/firestore';
@@ -48,15 +49,12 @@ import { Timestamp } from 'firebase/firestore';
 
 import ChatModal from '@/app/components/ChatModal';
 import { useState } from 'react';
+import { truncate } from 'fs';
+import { sourceMapsEnabled } from 'process';
 
 interface User {
   id: string;
   [key: string]: any;
-}
-
-interface Role {
-  name: string;
-  users: User[];
 }
 
 const Page = () => {
@@ -81,7 +79,7 @@ const Page = () => {
     secondUserId: any
   ) => {
     setIsChatOpen(isOpen);
-
+    
     // get the user data from db
     const docRef = doc(db, 'Users', secondUserId);
     const docSnap = await getDoc(docRef);
@@ -90,79 +88,91 @@ const Page = () => {
       const data = docSnap.data();
       data.id = docSnap.id;
 
-      // set the user in the state
+      // set the second user in the state
       setUserData2(data);
 
       // check if the conversation exists
       const user = auth.currentUser;
-      const convRef = doc(db, 'conversations', user?.uid + '_' + secondUserId);
-      const convSnap = await getDoc(convRef);
+      const convQ = query(collection(db, "conversations"), or(where("users", "in", [[user?.uid, secondUserId]]),where("users", "in", [[secondUserId, user?.uid]])));
+      const convSnap = await getDocs(convQ);
 
-      if (!convSnap.exists()) {
-        // if conversation does not exists - create a plain documet
-        await setDoc(
-          doc(db, 'conversations', user?.uid + '_' + secondUserId),
-          {}
-        );
-        console.log('converstaion does not exist');
+      if(convSnap.empty)
+      {
+        await addDoc(collection(db, "conversations"), {
+          users: [user?.uid, docSnap.id]
+        });
       }
-
-      resetChatMessages(user?.uid, data.id);
+      else
+      {
+        convSnap.forEach(async(el) => {
+          const docName = el.id;
+          const messagesQ = query(collection(db, "conversations", docName, "messages"), orderBy("timestamp"));
+          const messagesSnap = await getDocs(messagesQ);
+          let messages: any[] = [];
+          messagesSnap.forEach((el) => {
+            const data = el.data();
+            data.id = el.id;
+            messages.push(data);
+          })
+  
+          setMessages(messages);
+        })
+      }
     }
   };
 
   // load messages in chat
   const loadChat = async (user2id: any) => {
     const user = auth.currentUser;
-    const docName = user?.uid + '_' + user2id;
 
-    const docRef = doc(db, 'conversations', docName);
-    const docSnap = await getDoc(docRef);
+    console.log(user?.uid + ", " + user2id);
+    const convQ = query(collection(db, "conversations"), or(where("users", "in", [[user?.uid, user2id]]),where("users", "in", [[user2id, user?.uid]])));
+    const convSnap = await getDocs(convQ);
+    let docName:string = "";
 
-    if (docSnap.exists()) {
-      // if exists - get all document in messages subcollection
-      const collectionRef = collection(
-        db,
-        'conversations',
-        docName,
-        'messages'
-      );
-      const q = query(collectionRef, orderBy('timestamp'));
-      const querySnapshot = await getDocs(q);
+    convSnap.forEach(async(el) => {
+      docName = el.id;
+    })
 
-      let messages: any[] = [];
-
-      querySnapshot.forEach(doc => {
-        const data = doc.data();
-        data.id = doc.id;
-        messages.push(data);
-      });
-
-      setMessages(messages);
+    if(docName !== "")
+    {
+      const docRef = doc(db, 'conversations', docName);
+      const docSnap = await getDoc(docRef);
+  
+      if (docSnap.exists()) {
+        const collectionRef = collection(
+          db,
+          'conversations',
+          docName,
+          'messages'
+        );
+        const q = query(collectionRef, orderBy('timestamp'));
+        const querySnapshot = await getDocs(q);
+  
+        let messages: any[] = [];
+  
+        querySnapshot.forEach(doc => {
+          const data = doc.data();
+          data.id = doc.id;
+          messages.push(data);
+        });
+  
+        setMessages(messages);
+      }
     }
-  };
-
-  const resetChatMessages = async (user1Id: any, user2Id: any) => {
-    const docName = user1Id + '_' + user2Id;
-
-    const collectionRef = collection(db, 'conversations', docName, 'messages');
-    const q = query(collectionRef, orderBy('timestamp'));
-    const querySnapshot = await getDocs(q);
-
-    let messages: any[] = [];
-
-    querySnapshot.forEach(doc => {
-      const data = doc.data();
-      data.id = doc.id;
-      messages.push(data);
-    });
-
-    setMessages(messages);
   };
 
   const sendMessage = async () => {
     const user = auth.currentUser;
-    const docName = user?.uid + '_' + userData2.id;
+    
+    const convQ = query(collection(db, "conversations"), or(where("users", "in", [[user?.uid, userData2.id]]),where("users", "in", [[userData2.id, user?.uid]])));
+    const convSnap = await getDocs(convQ);
+    let docName:string = "";
+
+    convSnap.forEach(async(el) => {
+      docName = el.id;      
+    })
+
     await addDoc(collection(db, 'conversations', docName, 'messages'), {
       sender: user?.uid,
       content: chatContent,
@@ -170,15 +180,15 @@ const Page = () => {
     });
 
     setChatContent('');
-    resetChatMessages(user?.uid, userData2.id);
+    loadChat(userData2.id);
   };
 
   // get user with role
-  async function getUser(role: string) {
+  async function getUser() {
     const user = auth.currentUser;
     if (user) {
       const uid: any = user?.uid;
-      const docRef = doc(db, 'Users', uid);
+      const docRef   = doc(db, 'Users', uid);
 
       const docSnap = await getDoc(docRef);
 
@@ -188,33 +198,46 @@ const Page = () => {
 
         setUserData(data);
         setUserData2(data);
-
-        return JSON.stringify(data);
       }
     }
   }
 
   const returnLastMessage = async(firstUserId:any, secondUserId:any) => {
-    const q = query(collection(db, "conversations", firstUserId + "_" + secondUserId, "messages"), orderBy("timestamp", "desc"), limit(1));
-    const docsSnap = await getDocs(q);
+    const convQ    = query(collection(db, "conversations"), or(where("users", "in", [[firstUserId, secondUserId]]),where("users", "in", [[secondUserId, firstUserId]])));
+    const convSnap = await getDocs(convQ);
+    let docName:string = "";
 
-    let result:string = "";
-
-    docsSnap.forEach(async(el) => {
-      const data = el.data();
-
-      if(data['sender'] == firstUserId)
-        result += "Ty: ";
-
-      result += data['content'];
+    convSnap.forEach(async(el) => {
+      docName = el.id;      
     })
+    if(docName !== "")
+    {
+      const q        = query(collection(db, "conversations", docName, "messages"), orderBy("timestamp", "desc"), limit(1));
+      const docsSnap = await getDocs(q);
 
-    return result;
+      let result:string = "";
+
+      docsSnap.forEach((el) => {
+        const data         = el.data();
+        let content:string = data['content'];
+
+        if(content.length > 45)
+        {
+          content = content.substring(0, 45) + "...";
+        }
+
+        if(data['sender'] == firstUserId)
+          result += "Ty: ";
+        
+        result += content;
+      })
+
+      return result;
+    }
   }
 
   React.useEffect(() => {
     const fetchUsers = async (
-      role: string,
       setUser: React.Dispatch<React.SetStateAction<User[]>>
     ) => {
       const usersCollection = collection(db, 'Users');
@@ -257,8 +280,8 @@ const Page = () => {
     const onChanged = async(user: any) => {
       if(user)
       {      
-        await getUser('Students').then(() => {
-          fetchUsers('Students', setUsersData);
+        await getUser().then(() => {
+          fetchUsers(setUsersData);
         });
   
         loadChat(auth.currentUser?.uid);
