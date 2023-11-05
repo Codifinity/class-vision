@@ -36,23 +36,25 @@ const Page = () => {
           <div className="flex flex-col items-start">
             {/* day name */}
             <div className="bg-custom-dark/90 py-2 px-4 rounded-full">
-              <p className="text-white font-semibold">03.11</p>
+              <p className="text-white font-semibold">08.11</p>
             </div>
 
             {/* Sprawdziany */}
             <div className="w-full">
               <TestCard
                 testSubject="Matematyka"
-                testName="Wielomiany"
-                testTeacher="John Doe"
-                testDescription="Podrecznik strona 238"
+                testName="Sprawdzian z wielomianów"
+                testTeacher="Barbara Nowak"
+                testDescription="Dział 1"
+                testType="sprawdzian"
               />
 
               <TestCard
-                testSubject="Matematyka"
-                testName="Wielomiany"
-                testTeacher="John Doe"
-                testDescription="Podrecznik strona 238"
+                testSubject="Historia"
+                testName="2 Wojna Światowa"
+                testTeacher="Tadeusz Wybicki"
+                testDescription="Powtórz informację na temat 2 Wojny Światowej"
+                testType="odpowiedź"
               />
             </div>
           </div>
@@ -61,24 +63,19 @@ const Page = () => {
           <div className="flex flex-col items-start">
             {/* day name */}
             <div className="bg-custom-dark/90 py-2 px-4 rounded-full">
-              <p className="text-white font-semibold">03.11</p>
+              <p className="text-white font-semibold">09.11</p>
             </div>
 
             {/* Sprawdziany */}
             <div className="w-full">
               <TestCard
-                testSubject="Matematyka"
-                testName="Wielomiany"
-                testTeacher="John Doe"
-                testDescription="Podrecznik strona 238"
+                testSubject="Język Polski"
+                testName="Test z wiedzy z roku 1984"
+                testTeacher="Agnieszka Kowalska"
+                testDescription="Przeczytaj lekturę i utrwal wiadomości"
+                testType="kartkówka"
               />
 
-              <TestCard
-                testSubject="Matematyka"
-                testName="Wielomiany"
-                testTeacher="John Doe"
-                testDescription="Podrecznik strona 238"
-              />
             </div>
           </div>
 
@@ -86,23 +83,17 @@ const Page = () => {
           <div className="flex flex-col items-start">
             {/* day name */}
             <div className="bg-custom-dark/90 py-2 px-4 rounded-full">
-              <p className="text-white font-semibold">03.11</p>
+              <p className="text-white font-semibold">15.11</p>
             </div>
 
             {/* Sprawdziany */}
             <div className="w-full">
               <TestCard
-                testSubject="Matematyka"
-                testName="Wielomiany"
-                testTeacher="John Doe"
-                testDescription="Podrecznik strona 238"
-              />
-
-              <TestCard
-                testSubject="Matematyka"
-                testName="Wielomiany"
-                testTeacher="John Doe"
-                testDescription="Podrecznik strona 238"
+                testSubject="Geografia"
+                testName="Rzeki polski"
+                testTeacher="Stefan Brzęczyszczykiewicz"
+                testDescription="Mapa str. 189"
+                testType="odpowiedź"
               />
             </div>
           </div>

@@ -6,6 +6,7 @@ import Button from '../components/Button';
 
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebase';
+import React from 'react';
 
 // test account email@example.com haslo123
 
