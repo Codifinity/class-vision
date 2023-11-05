@@ -48,7 +48,7 @@ export default function Page() {
         if(el.subject == subjectName)
         newGrades[i] = el;
       })
-
+      
       setGrades(newGrades);
     }
   }
@@ -57,27 +57,21 @@ export default function Page() {
     auth.onAuthStateChanged(async(user:any) => {
       if(user)
       {
-        // get the role of user
-        const q             = query(collection(db, "UserRole"), where("userID", "==", user?.uid))
-        const querySnapshot = await getDocs(q);
-        let role:string     = "";
-        querySnapshot.forEach((doc) => {
-          role = doc.data()['role'];
-        })
-
         // get the user data
-        const docRef  = doc(db, "Users", "commonUsers", role, user?.uid);
+        const docRef  = doc(db, "Users", user?.uid);
         const docSnap = await getDoc(docRef);
-        let data:any  = {"school" : ""}
+        let data:any  = {role: "", school : ""}
         if(docSnap.exists())
         {
-          data['school'] = docSnap.data()['school'];
+          const data_in  = docSnap.data();
+          data.school    = data_in['school'];
+          data.role      = data_in['role'];
         }
-
+        
         // get the grades of user
-        if(role == "Students")
+        if(data.role == "Students")
         {
-          const gradesQuery = query(collection(db, "Schools", data['school'], "Grades"));
+          const gradesQuery = query(collection(db, "Schools", data.school, "Grades"));
           const gradesSnap  = await getDocs(gradesQuery);
           let grades:[{id: string, subject: string, type: string, grade: string}] = [{id: "", subject: "", type: "", grade: ""}];
           let i = 0;
@@ -93,7 +87,8 @@ export default function Page() {
             
             grades[i] = grade;
             i++;
-          })          
+          })
+
           setGrades(grades);
           setAllGrades(grades);
         }

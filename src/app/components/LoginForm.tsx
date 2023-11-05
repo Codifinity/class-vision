@@ -17,7 +17,7 @@ export default function LoginForm() {
   
   useEffect(() => {
     auth.onAuthStateChanged((authUser:any) => {
-      if (authUser) {        
+      if (authUser) {
         push('/dashboard');
       } else {        
       }

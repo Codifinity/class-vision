@@ -60,17 +60,15 @@ interface Role {
 }
 
 const Page = () => {
-  const [isChatOpen, setIsChatOpen] = React.useState<boolean>(false);
-  const [chatContent, setChatContent] = React.useState<string>('');
-  const [messages, setMessages] = React.useState<any[]>();
-  const isMobile = useMediaQuery('(max-width: 1280px)');
+  const [isChatOpen, setIsChatOpen]     = React.useState<boolean>(false);
+  const [chatContent, setChatContent]   = React.useState<string>('');
+  const [messages, setMessages]         = React.useState<any[]>();
+  const isMobile                        = useMediaQuery('(max-width: 1280px)');
 
-  const [userData, setUserData] = React.useState<any>({});
-  const [userData2, setUserData2] = React.useState<any>({});
+  const [userData, setUserData]         = React.useState<any>({});
+  const [userData2, setUserData2]       = React.useState<any>({});
 
-  const [studentsData, setStudentsData] = React.useState<User[]>([]);
-  const [parentsData, setParentsData] = React.useState<User[]>([]);
-  const [teacherData, setTeacherData] = React.useState<User[]>([]);
+  const [usersData, setUsersData]    = React.useState<User[]>([]);
 
   const { push } = useRouter();
 
@@ -80,17 +78,15 @@ const Page = () => {
 
   const toggleChat = async (
     isOpen: boolean,
-    role: string,
     secondUserId: any
   ) => {
     setIsChatOpen(isOpen);
 
     // get the user data from db
-    const docRef = doc(db, 'Users', 'commonUsers', role, secondUserId);
+    const docRef = doc(db, 'Users', secondUserId);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      console.log('user exists');
       const data = docSnap.data();
       data.id = docSnap.id;
 
@@ -182,7 +178,7 @@ const Page = () => {
     const user = auth.currentUser;
     if (user) {
       const uid: any = user?.uid;
-      const docRef = doc(db, 'Users', 'commonUsers', role, uid);
+      const docRef = doc(db, 'Users', uid);
 
       const docSnap = await getDoc(docRef);
 
@@ -204,10 +200,11 @@ const Page = () => {
 
     let result:string = "";
 
-    docsSnap.forEach((el) => {
+    docsSnap.forEach(async(el) => {
       const data = el.data();
+
       if(data['sender'] == firstUserId)
-        result += "Ty: ";      
+        result += "Ty: ";
 
       result += data['content'];
     })
@@ -220,7 +217,7 @@ const Page = () => {
       role: string,
       setUser: React.Dispatch<React.SetStateAction<User[]>>
     ) => {
-      const usersCollection = collection(db, 'Users', 'commonUsers', role);
+      const usersCollection = collection(db, 'Users');
   
       try {
         const snapshot = await getDocs(usersCollection);
@@ -249,14 +246,11 @@ const Page = () => {
   
           setUser(userList);
         } 
-        else 
-        {
-          console.log(`No documents found for ${role}`);
-        }
+
       } 
       catch (error)
       {
-        console.error(`Error fetching ${role} users:`, error);
+        console.error(`Error fetching users:`, error);
       }
     };
 
@@ -264,9 +258,7 @@ const Page = () => {
       if(user)
       {      
         await getUser('Students').then(() => {
-          fetchUsers('Students', setStudentsData);
-          fetchUsers('Teachers', setTeacherData);
-          fetchUsers('Parents', setParentsData);
+          fetchUsers('Students', setUsersData);
         });
   
         loadChat(auth.currentUser?.uid);
@@ -347,43 +339,15 @@ const Page = () => {
               lastMessageUserName="Małgorzata"
               lastMessage="O której zbiórka?"
               lastMessageTime="16:34"/> */}
-            {studentsData.map((student, index) => {
+            {usersData.map((user, index) => {
               return (
                 <ConversationCard
-                  key={student.id}
-                  click={() => toggleChat(true, 'Students', student.id)}
+                  key={user.id}
+                  click={() => toggleChat(true, user.id)}
                   src="/preview-pic.jpg"
-                  name={student.name}
-                  surname={student.surname}
-                  lastMessage={student.lastMessage}
-                  lastMessageTime="16:34"
-                />
-              );
-            })}
-
-            {parentsData.map(parent => {
-              return (
-                <ConversationCard
-                  key={parent.id}
-                  click={() => toggleChat(true, 'Parents', parent.id)}
-                  src="/preview-pic.jpg"
-                  name={parent.name}
-                  surname={parent.name}
-                  lastMessage={parent.lastMessage}
-                  lastMessageTime="16:34"
-                />
-              );
-            })}
-
-            {teacherData.map(teacher => {
-              return (
-                <ConversationCard
-                  key={teacher.id}
-                  click={() => toggleChat(true, 'Teachers', teacher.id)}
-                  src="/preview-pic.jpg"
-                  name={teacher.name}
-                  surname={teacher.surname}
-                  lastMessage={teacher.lastMessage}
+                  name={user.name}
+                  surname={user.surname}
+                  lastMessage={user.lastMessage}
                   lastMessageTime="16:34"
                 />
               );
