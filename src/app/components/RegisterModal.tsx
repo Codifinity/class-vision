@@ -8,11 +8,15 @@ import Button from './Button';
 import { getAuth, updatePassword } from 'firebase/auth';
 import { auth, db } from '../firebase';
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
+import { AiOutlineCloseCircle } from 'react-icons/ai';
 
 const RegisterModal = () => {
   const [newPassword1, setNewPassword1] = useState('');
   const [newPassword2, setNewPassword2] = useState('');
   const [wasPasswordChanged, setPasswordChanged] = useState(true);
+
+  const [isError, setIsError] = React.useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = React.useState<string>('');
 
   async function checkUser(role: string) {
     const user = auth.currentUser;
@@ -56,6 +60,8 @@ const RegisterModal = () => {
           console.log(e.message);
         });
     } else {
+      setIsError(true);
+      setErrorMessage('Hasła się nie zgadzają');
       console.log("passwords don't match");
     }
 
@@ -85,6 +91,13 @@ const RegisterModal = () => {
                   którego będziesz się od teraz logować
                 </p>
               </div>
+              {/* Error box */}
+              {isError && (
+                <div className="w-full bg-red-200 flex gap-4 items-center p-4 rounded-md">
+                  <AiOutlineCloseCircle className="text-4xl" />
+                  <p className="font-medium">{errorMessage}</p>
+                </div>
+              )}
               <div className=" w-full flex flex-col py-8 gap-4">
                 <input
                   type="password"
@@ -93,7 +106,9 @@ const RegisterModal = () => {
                   value={newPassword1}
                   onKeyDown={e => e.key === 'Enter' && resetPassword}
                   onChange={e => setNewPassword1(e.target.value)}
-                  className="w-full px-4 py-3 rounded-full outline-none border-2 shadow-lg shadow-transparent  focus:shadow-dark-blue/20 focus:border-light-blue"
+                  className={`w-full px-4 py-3 rounded-full outline-none border-2 shadow-lg shadow-transparent ${
+                    isError && 'border-red-500'
+                  }  focus:shadow-dark-blue/20 focus:border-light-blue`}
                   placeholder="Nowe Hasło"
                 />
                 <input
@@ -103,7 +118,9 @@ const RegisterModal = () => {
                   value={newPassword2}
                   onKeyDown={e => e.key === 'Enter' && resetPassword}
                   onChange={e => setNewPassword2(e.target.value)}
-                  className="w-full px-4 py-3 rounded-full outline-none border-2 shadow-lg shadow-transparent  focus:shadow-dark-blue/20 focus:border-light-blue"
+                  className={`w-full px-4 py-3 rounded-full outline-none border-2 shadow-lg shadow-transparent ${
+                    isError && 'border-red-500'
+                  }  focus:shadow-dark-blue/20 focus:border-light-blue`}
                   placeholder="Powtórz Hasło"
                 />
                 <Button

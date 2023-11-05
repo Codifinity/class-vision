@@ -39,15 +39,15 @@ import {
   setDoc,
   addDoc,
   orderBy,
-  limit, 
+  limit
 } from 'firebase/firestore';
-import { getAuth } from "firebase/auth";
+import { getAuth } from 'firebase/auth';
 import { doc, updateDoc, getDoc, getDocs } from 'firebase/firestore';
 import { Timestamp } from 'firebase/firestore';
 
-
 import ChatModal from '@/app/components/ChatModal';
 import { useState } from 'react';
+import { FallingLines } from 'react-loader-spinner';
 
 interface User {
   id: string;
@@ -71,6 +71,8 @@ const Page = () => {
   const [studentsData, setStudentsData] = React.useState<User[]>([]);
   const [parentsData, setParentsData] = React.useState<User[]>([]);
   const [teacherData, setTeacherData] = React.useState<User[]>([]);
+
+  const [isLoading, setisLoading] = React.useState<boolean>(true);
 
   const { push } = useRouter();
 
@@ -198,22 +200,30 @@ const Page = () => {
     }
   }
 
-  const returnLastMessage = async(firstUserId:any, secondUserId:any) => {
-    const q = query(collection(db, "conversations", firstUserId + "_" + secondUserId, "messages"), orderBy("timestamp", "desc"), limit(1));
+  const returnLastMessage = async (firstUserId: any, secondUserId: any) => {
+    const q = query(
+      collection(
+        db,
+        'conversations',
+        firstUserId + '_' + secondUserId,
+        'messages'
+      ),
+      orderBy('timestamp', 'desc'),
+      limit(1)
+    );
     const docsSnap = await getDocs(q);
 
-    let result:string = "";
+    let result: string = '';
 
-    docsSnap.forEach((el) => {
+    docsSnap.forEach(el => {
       const data = el.data();
-      if(data['sender'] == firstUserId)
-        result += "Ty: ";      
+      if (data['sender'] == firstUserId) result += 'Ty: ';
 
       result += data['content'];
-    })
+    });
 
     return result;
-  }
+  };
 
   React.useEffect(() => {
     const fetchUsers = async (
@@ -221,17 +231,17 @@ const Page = () => {
       setUser: React.Dispatch<React.SetStateAction<User[]>>
     ) => {
       const usersCollection = collection(db, 'Users', 'commonUsers', role);
-  
+
       try {
         const snapshot = await getDocs(usersCollection);
-  
+
         if (!snapshot.empty) {
           const userList: User[] = snapshot.docs.map(doc => {
             const data = doc.data();
             const grades = data.grades || [];
             const user = auth.currentUser;
-            const seconduserId = doc.id;        
-            
+            const seconduserId = doc.id;
+
             return {
               id: doc.id,
               class: data.class || '',
@@ -246,41 +256,49 @@ const Page = () => {
               lastMessage: returnLastMessage(user?.uid, seconduserId)
             };
           });
-  
+
           setUser(userList);
-        } 
-        else 
-        {
+        } else {
           console.log(`No documents found for ${role}`);
         }
-      } 
-      catch (error)
-      {
+      } catch (error) {
         console.error(`Error fetching ${role} users:`, error);
       }
+
+      setisLoading(false);
     };
 
-    const onChanged = async(user: any) => {
-      if(user)
-      {      
+    const onChanged = async (user: any) => {
+      if (user) {
         await getUser('Students').then(() => {
           fetchUsers('Students', setStudentsData);
           fetchUsers('Teachers', setTeacherData);
           fetchUsers('Parents', setParentsData);
         });
-  
+
         loadChat(auth.currentUser?.uid);
+      } else {
+        push('/login');
       }
-      else
-      {
-        push("/login");
-      }
-    }
+    };
 
     auth.onAuthStateChanged(onChanged);
   }, [push]);
 
   const [newConversation, setNewConversation] = useState(false);
+
+  if (isLoading === true) {
+    return (
+      <div className="w-full h-screen flex items-center justify-center">
+        <FallingLines
+          color="#00A7EE"
+          width="100"
+          visible={true}
+          aria-label="falling-lines-loading"
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-screen">
