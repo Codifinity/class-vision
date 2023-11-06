@@ -23,7 +23,7 @@ const Page = () => {
 
             {/* Date */}
             <p className="text-2xl font-medium text-custom-dark">
-              30.10 - 05.11
+              06.11 - 10.11
             </p>
 
             {/* Front arrow */}

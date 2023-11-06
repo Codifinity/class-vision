@@ -25,7 +25,7 @@ let exams: examsProps[] = [
     subject: 'geografia',
     type: 'odpowiedz',
     description: 'Rzeki polski',
-    date: '15-11-2023'
+    date: '09-11-2023'
   }
 ];
 
